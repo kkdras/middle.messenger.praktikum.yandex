@@ -14,14 +14,19 @@
   "engines": {
     "node": "18.13.0"
   },
+  "type": "module",
   "targets": {
     "client": {
       "context": "browser",
       "source": "./src/client/public/index.html",
       "sourceMap": false,
-      "distDir": "./build/client"
+      "distDir": "./build/client",
+      "engines": {
+        "browsers": ">= 50%"
+      }
     },
     "server": {
+      "outputFormat": "esmodule",
       "context": "node",
       "source": "./src/server/index.js",
       "sourceMap": false,

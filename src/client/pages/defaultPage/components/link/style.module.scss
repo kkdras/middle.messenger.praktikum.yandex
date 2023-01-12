@@ -1,0 +1,26 @@
+.link {
+   padding: 5px;
+   border-radius: 10px;
+   flex-grow: 1;
+   width: 100%;
+   letter-spacing: 1px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   a {
+      font-weight: 600;
+      color: var(--bright-color from global);
+      font-size: 14px;
+      line-height: 1.2;
+      @media (any-hover: hover){
+         &:hover{
+            text-decoration: underline;
+         }
+      }
+   }
+
+   &:not(:last-child) {
+      margin: 0px 0px 20px 0px;
+   };
+}

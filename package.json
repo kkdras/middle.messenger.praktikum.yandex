@@ -1,0 +1,62 @@
+{
+  "name": "middle.messenger.praktikum.yandex",
+  "version": "1.0.0",
+  "description": "---",
+  "scripts": {
+    "dev": "parcel --open --target client --dist-dir build",
+    "start": "node ./build/server/index.js",
+    "build": "npm run build:client & npm run build:server",
+    "build:client": "parcel build --target client --no-cache",
+    "build:server": "parcel build --target server --no-cache",
+    "test": "node --test",
+    "clean": "rm -r .parcel-cache build"
+  },
+  "engines": {
+    "node": "18.13.0"
+  },
+  "targets": {
+    "client": {
+      "context": "browser",
+      "source": "./src/client/public/index.html",
+      "sourceMap": false,
+      "distDir": "./build/client"
+    },
+    "server": {
+      "context": "node",
+      "source": "./src/server/index.js",
+      "sourceMap": false,
+      "distDir": "./build/server"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkdras/middle.messenger.praktikum.yandex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kkdras/middle.messenger.praktikum.yandex/issues"
+  },
+  "homepage": "https://github.com/kkdras/middle.messenger.praktikum.yandex#readme",
+  "devDependencies": {
+    "@parcel/transformer-inline-string": "^2.4.1",
+    "@parcel/transformer-sass": "^2.8.2",
+    "parcel": "^2.4.1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "handlebars": "^4.7.7"
+  },
+  "@parcel/transformer-css": {
+    "global": true,
+    "cssModules": {
+      "dashedIdents": true,
+      "pattern": "[local]-[hash]"
+    }
+  },
+  "@parcel/transformer-js": {
+    "inlineFS": false,
+    "inlineEnvironment": false
+  }
+}

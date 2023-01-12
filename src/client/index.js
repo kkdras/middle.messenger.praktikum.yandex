@@ -2,7 +2,7 @@ import { externalError, loginPage, notFound, registRationPage, defaultPage, chat
 import style from './styles/style.scss';
 
 const root = document.getElementById('root');
-let path = window.location.pathname.substring(1);
+let path = window.location.hash.substring(1);
 
 
 const selectPage =

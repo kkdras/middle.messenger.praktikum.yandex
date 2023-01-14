@@ -4,6 +4,8 @@ import path from 'node:path';
 const app = express();
 const PORT = 3000;
 
+const ROOT = process.cwd();
+
 const readFilePromisify = (path, encoding = 'utf-8') => new Promise((res, rej) => {
    readFile(path, { encoding }, (err, data) => {
       if (err) rej(err)
@@ -11,12 +13,16 @@ const readFilePromisify = (path, encoding = 'utf-8') => new Promise((res, rej) =
    });
 });
 
-app.use(express.static(path.resolve(__dirname, '../../build' , 'client')));
+app.use(express.static(path.resolve(ROOT, 'build/client')));
 
 app.get('/*', async (req, res) => {
    try {
-      const page = await readFilePromisify(path.resolve(__dirname, '../../', 'build/client/index.html'));
-      res.status(200).send(page);
+      if (req.url.includes('#') || req.url === '/') {
+         const page = await readFilePromisify(path.resolve(ROOT, 'build/client/index.html'));
+         res.status(200).send(page);
+      } else{
+         res.redirect(`/#${req.url.slice(1)}`);
+      }
    } catch (e) {
       res.status(500).send(e.message);
    }

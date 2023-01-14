@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
-import assert from 'node:assert'
-import { classNames } from './index.js'
+import assert from 'node:assert';
+import { classNames } from './index.js';
 
 describe('test classNames', () => {
    it('case 1', () => {

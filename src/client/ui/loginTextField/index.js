@@ -1,7 +1,7 @@
-import Handlebars from 'handlebars'
-import tmp from 'bundle-text:./index.hbs'
-import * as style from './style.module.scss'
-import { classNames } from '../../utils'
+import Handlebars from 'handlebars';
+import tmp from 'bundle-text:./index.hbs';
+import * as style from './style.module.scss';
+import { classNames } from '../../utils';
 
 export default ({
    type = 'text',
@@ -18,4 +18,4 @@ export default ({
    },
    type,
    ...props
-})
+});

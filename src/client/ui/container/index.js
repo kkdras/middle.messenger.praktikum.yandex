@@ -1,6 +1,6 @@
-import Handlebars from 'handlebars'
-import tmp from 'bundle-text:./index.hbs'
-import * as style from './style.module.scss'
+import Handlebars from 'handlebars';
+import tmp from 'bundle-text:./index.hbs';
+import * as style from './style.module.scss';
 
 /**
  * 
@@ -14,6 +14,6 @@ export default (props) => Handlebars.compile(tmp)({
       section: style.section,
    },
    ...props
-})
+});
 
 

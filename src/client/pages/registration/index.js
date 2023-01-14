@@ -1,7 +1,7 @@
 import Handlebars from 'handlebars';
 import tmp from 'bundle-text:./index.hbs';
-import { Button, Container, LoginTextField, Card } from '../../ui'
-import * as style from './style.module.scss'
+import { Button, Container, LoginTextField, Card } from '../../ui';
+import * as style from './style.module.scss';
 
 const fields = [
    { label: 'Почта', id: 'email' },

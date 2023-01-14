@@ -13,8 +13,8 @@ const CurrentPage = Handlebars.compile(tmp)({
       chatDialog: style.chat__dialog
    },
    chatClass: style.chat,
-})
+});
 
 export default Container({
    children: CurrentPage
-})
+});

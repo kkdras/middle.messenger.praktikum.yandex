@@ -23,4 +23,4 @@ export const classNames = (...args) => {
       }).join(' ')
 
    return calcArr(args).trim()
-}
+};

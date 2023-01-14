@@ -4,9 +4,10 @@
    width: 100%;
    transition: all 0.3s ease 0s;
    position: relative;
+
    &:not(:last-child) {
       margin: 0px 0px 10px 0px;
-   };
+   }
 
    &__label {
       color: var(--second-color from global);
@@ -24,10 +25,8 @@
       outline: none;
    }
 
-   &_error {
-      &__input {
-         color: var(--wrong-color from global);
-      }
+   &_error &__input {
+      color: var(--wrong-color from global);
    }
 
    &::after {

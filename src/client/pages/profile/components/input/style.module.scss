@@ -7,15 +7,18 @@
    min-height: 34px;
    padding: 5px 0;
    width: 100%;
+
    &:not(:last-child) {
       border-bottom: 1px solid #EAEAEA;
-   };
+   }
+
    label {
       color: var(--bright-color from global);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
    }
+
    input {
       flex: 1 1 auto;
       font-size: 14px;

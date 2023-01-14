@@ -12,8 +12,10 @@
       display: flex;
       flex-direction: column;
       justify-content: start;
+   
       & > div {
          padding: 10px;
+
          &:not(:last-child) {
             border-bottom: 1px solid #EAEAEA;
          }
@@ -25,6 +27,7 @@
    }
 
    &__profileLink {
+   
       & > a {
          @media (any-hover: hover){
             &:hover{

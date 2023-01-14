@@ -15,6 +15,7 @@
    display: flex;
    align-items: center;
    justify-content: center;
+
    a {
       text-decoration: none;
       width: 28px;
@@ -22,6 +23,7 @@
       overflow: hidden;
       border-radius: 50%;
    }
+
    @media (min-width: 768px){
       flex: 0 0 64px;
       width: 64px;
@@ -45,6 +47,7 @@
       flex-direction: column;
       align-items: center;
       margin-bottom: 50px;
+
       input {
          opacity: 0;
          visibility: hidden;

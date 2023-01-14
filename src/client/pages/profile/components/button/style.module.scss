@@ -6,15 +6,18 @@
    align-items: center;
    min-height: 34px;
    padding: 5px 0;
+
    &:not(:last-child) {
       border-bottom: 1px solid #EAEAEA;
-   };
+   }
+
    &__item {
       cursor: pointer;
       border: none;
       background-color: transparent;
       font-size: 14px;
       color: var(--primary-color from global);
+
       &_warning {
          color: var(--wrong-color from global);
       }

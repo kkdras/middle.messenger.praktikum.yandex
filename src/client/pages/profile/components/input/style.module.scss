@@ -1,31 +1,36 @@
 @import url('./../../../../styles/style.scss');
 
 .input {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   min-height: 34px;
-   padding: 5px 0;
-   width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-height: 34px;
+	padding: 5px 0;
+	width: 100%;
 
-   &:not(:last-child) {
-      border-bottom: 1px solid #EAEAEA;
-   }
+	border-bottom: 1px solid #EAEAEA;
 
-   label {
-      color: var(--bright-color from global);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-   }
+	label {
+		color: var(--bright-color from global);
+		font-size: 14px;
+		font-weight: 500;
+		cursor: pointer;
+	}
 
-   input {
-      flex: 1 1 auto;
-      font-size: 14px;
-      color: var(--second-color from global);
-      border: none;
-      outline: none;
-      text-align: right;
-      background-color: none;
-   }
+	input {
+		flex: 1 1 auto;
+		font-size: 14px;
+		color: var(--second-color from global);
+		border: none;
+		outline: none;
+		text-align: right;
+		background-color: none;
+	}
+}
+
+.input:global(.invalid) {
+	border-bottom-color: red;
+	input {
+		color: red;
+	}
 }

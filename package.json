@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "---",
   "scripts": {
+    "lint": "eslint --ext .ts,.jsx,.tsx src",
+    "lint:fix": "eslint --ext .ts,.jsx,.tsx src --fix",
     "dev": "parcel --open --target client --dist-dir build",
     "start": "node ./build/server/index.js",
     "build": "npm run build:client & npm run build:server",
@@ -19,7 +21,6 @@
     "client": {
       "context": "browser",
       "source": "./src/client/public/index.html",
-      "sourceMap": false,
       "distDir": "./build/client",
       "engines": {
         "browsers": ">= 50%"
@@ -47,11 +48,23 @@
   "devDependencies": {
     "@parcel/transformer-inline-string": "^2.4.1",
     "@parcel/transformer-sass": "^2.8.2",
-    "parcel": "^2.4.1"
+    "@types/uuid": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.50.0",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "parcel": "^2.4.1",
+    "postcss": "^8.4.21",
+    "postcss-modules": "^4.3.1",
+    "stylelint": "^14.16.1",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "handlebars": "^4.7.7"
+    "handlebars": "^4.7.7",
+    "uuid": "^9.0.0"
   },
   "@parcel/transformer-css": {
     "global": true,

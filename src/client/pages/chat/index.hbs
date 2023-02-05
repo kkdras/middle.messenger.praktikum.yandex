@@ -1,14 +1,22 @@
 <div class="{{class.chat}}">
-   <div class="{{class.chatUsers}}">
-      <div class="{{class.chatActions}}">
-         <div class="{{class.chatProfileLink}}">
-            <a href="/profile">Профиль ></a>
-         </div>
-         <input type="text" placeholder="Поиск" class="{{class.chatSearch}}">
-      </div>
-      {{{users}}}
-   </div>
-   <div class="{{class.chatDialog}}">
-      Выберите чат чтобы отправить сообщение
-   </div>
+	<div class="{{class.chatUsers}}">
+		<div class="{{class.chatActions}}">
+			<div class="{{class.chatProfileLink}}">
+				<a href="/profile">Профиль ></a>
+			</div>
+			<input type="text" placeholder="Поиск" class="{{class.chatSearch}}">
+		</div>
+		{{{users}}}
+	</div>
+	<div class="{{class.chatDialog}}">
+		<div class="{{class.chatDialog}}">
+			Выберите чат чтобы отправить сообщение
+		</div>
+		<form novalidate class="{{class.form}}">
+			<input accept="image/*" name="file" id="file" class="{{class.fileInput}}" type="file">
+			{{{addButton}}}
+			{{{input}}}
+			{{{submitButton}}}
+		</form>
+	</div>
 </div>

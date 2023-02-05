@@ -1,4 +1,16 @@
-import { externalError, loginPage, notFound, registRationPage, defaultPage, chat, profile } from './pages';
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-nested-ternary */
+import { Block } from './packages';
+import {
+	chat,
+	externalError,
+	loginPage,
+	notFound,
+	registRationPage,
+	profile,
+	defaultPage
+} from './pages';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import style from './styles/style.scss';
 
 const root = document.getElementById('root');
@@ -9,23 +21,25 @@ const path = (
 ).substring(1);
 const windowPath = window.location.pathname;
 
-const selectPage =
-	path === '' && windowPath === '/' ? defaultPage :
-	path === 'login' ? loginPage :
-	path === 'externalError' ? externalError :
-	path === 'notFound' ? notFound :
-	path === 'chat' ? chat :
-	path === 'profile' ? profile:
-	path === 'registration' ? registRationPage : notFound;
+const selectPage =	path === '' && windowPath === '/' ? defaultPage
+	: path === 'login' ? loginPage
+		: path === 'externalError' ? externalError
+			: path === 'notFound' ? notFound
+				: path === 'chat' ? chat
+					: path === 'profile' ? profile
+						: path === 'registration' ? registRationPage : notFound;
 
-if (!root) {
-	throw new Error('root container not found');
-}
+if (!root) throw new Error('root container not found');
 
-root.innerHTML = selectPage;
+const render = (rootEl: HTMLElement, component: Block) => {
+	rootEl.innerHTML = '';
+	const content = component.getContent();
+	if (!content) {
+		console.error('content is null on render function');
+		return;
+	}
+	rootEl.append(content);
+	component.dispatchComponentDidMount();
+};
 
-document.querySelectorAll('form').forEach((item) => {
-	item.addEventListener('submit', (e) => {
-		e.preventDefault();
-	});
-});
+render(root, selectPage);

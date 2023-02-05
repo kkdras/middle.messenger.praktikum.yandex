@@ -16,7 +16,7 @@ const fields: TextFieldProps[] = [
 ];
 
 const buttons: ButtonPropsType[] = [
-	{ children: 'Авторизоваться', classes: style.form__logInButton },
+	{ children: 'Авторизоваться', classes: style.form__logInButton, type: 'submit' },
 	{ children: 'Нет аккаунта?', type: 'outline' }
 ];
 

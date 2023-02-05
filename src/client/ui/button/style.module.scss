@@ -1,23 +1,24 @@
 @import url("./../../styles/style.scss");
 
 .button {
-   display: flex;
-   justify-content:center;
-   align-items: center;
-   min-width: 100%;
-   background-color: var(--primary-color from global);
-   border-radius: 8px;
-   height: 37px;
-   color: #fff;
-   font-size: 16px;
-   line-height: calc(14px / 13px) * 100%;
-   cursor: pointer;
+	display: flex;
+	justify-content:center;
+	align-items: center;
+	min-width: 100%;
+	background-color: var(--primary-color from global);
+	border-radius: 8px;
+	height: 37px;
+	color: #fff;
+	font-size: 16px;
+	line-height: calc(14px / 13px) * 100%;
+	cursor: pointer;
+	border: none;
 
-   &_outlined {
-      border: 2px solid var(--primary-color from global);
-      background-color: #fff;
-      color: var(--primary-color from global);
-   }
+	&_outlined {
+		border: 2px solid var(--primary-color from global);
+		background-color: #fff;
+		color: var(--primary-color from global);
+	}
 }
 
 

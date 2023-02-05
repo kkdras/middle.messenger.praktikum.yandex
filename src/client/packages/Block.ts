@@ -1,16 +1,19 @@
+/* eslint-disable no-param-reassign */
 import { v4 } from 'uuid';
-import { EventBus, IEventBus } from './Event-bus';
+import Handlebars from 'handlebars';
+import EventBus, { IEventBus } from './Event-bus';
 
-export abstract class Block<T extends Record<string, unknown> = {}> {
-  static EVENTS = {
-    INIT: "init",
-    FLOW_CDM: "flow:component-did-mount",
-    FLOW_CDU: "flow:component-did-update",
-    FLOW_RENDER: "flow:render"
-  };
-	
-  _element: HTMLElement | null = null;
-  _children: Block<any>[] | null = null;
+type PropsType = Record<string, unknown>
+abstract class Block<T extends PropsType = {}> {
+	static EVENTS = {
+		INIT: 'init',
+		FLOW_CDM: 'flow:component-did-mount',
+		FLOW_CDU: 'flow:component-did-update',
+		FLOW_RENDER: 'flow:render'
+	};
+
+	_element: HTMLElement | null = null;
+	_children: Record<string, Block> = {};
 
 	private _meta: {
 		tagName: string;
@@ -18,17 +21,18 @@ export abstract class Block<T extends Record<string, unknown> = {}> {
 		prevProps: null | T;
 	};
 
-  id: string;
-  private _eventBus: () => EventBus;
-	props: Record<string, unknown>
-	
-  /** JSDoc
+	id: string;
+	_eventBus: ()=> EventBus;
+	props: PropsType;
+	parent: Block | null = null;
+
+	/** JSDoc
 	 * @param {string} tagName
 	 * @param {Object} props
 	*
 	* @returns {void}
 	*/
-	constructor(tagName = "div", props: T) {
+	constructor(tagName: string, props: T) {
 		const eventBus = new EventBus();
 		this._meta = {
 			tagName,
@@ -37,9 +41,8 @@ export abstract class Block<T extends Record<string, unknown> = {}> {
 		};
 		this.id = v4();
 
-		this._lookForChildren();
-
 		this.props = this._makePropsProxy(props);
+		this._writeChildren();
 
 		this._eventBus = () => eventBus;
 
@@ -47,218 +50,309 @@ export abstract class Block<T extends Record<string, unknown> = {}> {
 		eventBus.emit(Block.EVENTS.INIT);
 	}
 
-  _mountChildren() {
-    this._children?.forEach((el) => {
-			const element = this.getContent();
-      const replaceEl = element
-        ?.querySelector(`${el._meta.tagName}[data-id=${el.id}]`);
+	_mountChildren(element: HTMLElement) {
+		if (!element) return;
+		Object.values(this._children).forEach((comp) => {
+			const replaceEl = element
+				?.querySelector(`${comp._meta.tagName}[data-id="${comp.id}"]`);
 
-      if (!replaceEl || !element) return;
-      replaceEl.parentNode?.replaceChild(replaceEl, element);
-    });
-  }
+			const newChild = comp.getContent();
+			if (!replaceEl || !newChild) return;
 
-  _lookForChildren() {
-    const children: Block<any>[] = [];
-    for (const key in this.props) {
-      const prop = this.props[key];
+			replaceEl.parentNode?.replaceChild(newChild, replaceEl);
+		});
+	}
 
-      if (prop instanceof Block) {
-        children.push(prop);
-      }
-    }
+	static compile(tmp: string, options: PropsType) {
+		const prepareProps: PropsType = {};
 
-    if (children.length) {
-      this._children = children;
-    }
-  }
+		const checkValue = (key: any, value: unknown, target: PropsType | unknown[]) => {
+			if (value instanceof Block) {
+				(target as PropsType)[key] = value.toString();
+				return;
+			}
 
-  _registerEvents(eventBus: IEventBus) {
-    eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
-    eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
-    eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
-    eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
-  }
+			if (Array.isArray(value)) {
+				const arrayChildren: unknown[] = [];
 
-  _addListeners() {
-    const prevEvents = this._meta.prevProps?.events || {};
-    const newEvents = this._meta.props?.events || {};
+				value.forEach((item, i) => {
+					if (Array.isArray(item)) throw new Error('nested arrays are not supported');
 
-    for (const eventName in newEvents) {
-      const newHandler = newEvents[eventName as keyof typeof newEvents];
-      const prevHandler = prevEvents[eventName as keyof typeof newEvents];
+					// последовательно запишим компоненты в массив
+					checkValue(i, item, arrayChildren);
+				});
 
-      if (newHandler === prevHandler) return;
+				(target as PropsType)[key] = arrayChildren.join('');
+				return;
+			}
+			(target as PropsType)[key] = value;
+		};
 
-      this.getContent()?.addEventListener(eventName, newHandler);
-    }
-  }
+		Object.entries(options)
+			.forEach((item) => checkValue(...item, prepareProps));
 
-  _removeListeners() {
-    const prevEvents = this._meta.prevProps?.events || {};
-    const newEvents = this._meta.props?.events || {};
+		const textHtml = Handlebars.compile(tmp)(prepareProps);
 
-    for (const eventName in prevEvents) {
-      const newHandler = newEvents[eventName as keyof typeof newEvents];
-      const prevHandler = prevEvents[eventName as keyof typeof newEvents];
+		const template = document.createElement('template');
+		template.innerHTML = textHtml;
+		return template.content;
+	}
 
-      if (newHandler !== prevHandler) {
-        this.getContent()?.removeEventListener(eventName, prevHandler);
-      }
-    }
-  }
+	_writeChildren() {
+		const children: Record<string, Block> = {};
 
-  _createResources() {
-    const { tagName } = this._meta;
-    this._element = this._createDocumentElement(tagName);
+		const checkValue = (key: any, value: unknown) => {
+			if (value instanceof Block) {
+				children[key] = value;
+				return;
+			}
 
-    this._element.dataset.id = this.id;
-  }
-  
+			if (Array.isArray(value)) {
+				value.forEach((item, i) => {
+					if (Array.isArray(item)) throw new Error('nested arrays are not supported');
 
-  init() {
-    this._createResources();
-    this._eventBus().emit(Block.EVENTS.FLOW_RENDER);
-  }
+					checkValue(i + key, item);
+				});
 
-  _componentDidMount() {
-    this.componentDidMount();
-  }
+			}
+		};
 
-  // Может переопределять пользователь, необязательно трогать
-  componentDidMount() {}
+		Object.entries(this.props)
+			.forEach((item) => checkValue(...item));
 
-  dispatchComponentDidMount() {
-    this._eventBus().emit(Block.EVENTS.FLOW_CDM)
-  }
+		this._children = children;
+	}
 
-  _componentDidUpdate(prevProps: T, newProps: T) {
-    const needRender = this.componentDidUpdate(prevProps, newProps);
-    if (needRender) {
-      this._removeListeners();
-      this._eventBus().emit(Block.EVENTS.FLOW_RENDER);
-    }
-  }
+	_registerEvents(eventBus: IEventBus) {
+		eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
+		eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
+		eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
+		eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
+	}
 
-  // Может переопределять пользователь, необязательно трогать
-  componentDidUpdate(prevProps: T, newProps: T) {
-    return prevProps !== newProps;
-  }
+	_addListeners() {
+		const prevEvents = this._meta.prevProps?.events || {};
+		const newEvents = this._meta.props?.events || {};
 
-  setProps = (nextProps: T) => {
-    if (!nextProps) {
-      return;
-    }
+		Object.keys(newEvents).forEach((eventName) => {
+			const newHandler = newEvents[eventName as keyof typeof newEvents];
+			const prevHandler = prevEvents[eventName as keyof typeof newEvents];
 
-    this._meta.prevProps = this._meta.props;
-    this._meta.props = nextProps;
-    this._lookForChildren();
-    Object.keys(nextProps).forEach(key => {
-      if (!(key in (this._meta.prevProps as T))) {
-        delete this.props[key];
-      }
-    })
+			if (newHandler === prevHandler) return;
 
-    Object.assign(this.props, nextProps);
-  };
+			this.getContent()?.addEventListener(eventName, newHandler);
+		});
+	}
 
-  get element() {
-    return this._element;
-  }
+	_removeListeners() {
+		const prevEvents = this._meta.prevProps?.events || {};
+		const newEvents = this._meta.props?.events || {};
 
-	abstract render(): string;
+		Object.keys(prevEvents).forEach((eventName) => {
+			const newHandler = newEvents[eventName as keyof typeof newEvents];
+			const prevHandler = prevEvents[eventName as keyof typeof newEvents];
 
-  _render() {
-    const block = this.render();
+			// eslint-disable-next-line curly
+			if (newHandler !== prevHandler) {
+				this.getContent()?.removeEventListener(eventName, prevHandler);
+			}
+		});
+	}
 
-    // Этот небезопасный метод для упрощения логики
-    // Используйте шаблонизатор из npm или напишите свой безопасный
-    // Нужно не в строку компилировать (или делать это правильно),
-    // либо сразу в DOM-элементы возвращать из compile DOM-ноду
-    if (this._element )this._element.innerHTML = block;
-    this._addListeners();
-    this._mountChildren();
-  }
+	_createResources() {
+		const { tagName } = this._meta;
+		this._element = this._createDocumentElement(tagName);
 
-  // Может переопределять пользователь, необязательно трогать
+		this._element.dataset.id = this.id;
+	}
 
-  getContent() {
-    return this.element;
-  }
+	init() {
+		this._createResources();
+		this._eventBus().emit(Block.EVENTS.FLOW_RENDER);
+	}
 
-  _makePropsProxy(userProps: T) {
-    const props = deepClone(userProps);
-    let timeoutUpdate: null | number = null;
-    const emitCDU = () => {
-      this._eventBus().emit(
-        Block.EVENTS.FLOW_CDU,
-        this._meta.prevProps,
-        this._meta.props
-      );
-      timeoutUpdate = null;
-    }
+	_componentDidMount() {
+		this.componentDidMount();
+	}
 
+	// Может переопределять пользователь, необязательно трогать
+	// eslint-disable-next-line class-methods-use-this
+	componentDidMount() {}
 
-    const debounceWrapper = () => {
-      if (!timeoutUpdate) {
-        timeoutUpdate = debounceInvokeFunction(emitCDU)
-      }
-    }
+	dispatchComponentDidMount() {
+		this._eventBus().emit(Block.EVENTS.FLOW_CDM);
+		Object.values(this._children).forEach((el) => {
+			el.dispatchComponentDidMount();
+		});
+	}
 
-    const proxyProps = new Proxy(props, {
-      get (target, propertyName) {
-        const value = target[propertyName as keyof typeof target];
-        return typeof value === 'function' ? value.bind(target) : value
-      },
-      set (target, propertyName, newValue) {
-        target[propertyName as keyof typeof target] = newValue;
-        emitCDU();
-        return true;
-      },
-      deleteProperty(target, propertyName) {
-        if (!(propertyName in target))
-          throw new Error('property that you try to delete does\'t exist in target object');
-        delete target[propertyName as keyof typeof target];
-        debounceWrapper();
-        return true;
-      }
-    })
+	_componentDidUpdate(prevProps: T, newProps: T) {
+		const needRender = this.componentDidUpdate(prevProps, newProps);
+		if (needRender) this._eventBus().emit(Block.EVENTS.FLOW_RENDER);
 
-    return proxyProps;
-  }
+	}
 
-  _createDocumentElement(tagName: string) {
-    // Можно сделать метод, который через фрагменты в цикле создаёт сразу несколько блоков
-    return document.createElement(tagName);
-  }
+	// Может переопределять пользователь, необязательно трогать
+	// eslint-disable-next-line class-methods-use-this
+	componentDidUpdate(prevProps: T, newProps: T) {
+		return prevProps !== newProps;
+	}
 
-  show() {
-		const el = this.getContent();
-		if (el) {
-			el.style.display = 'block';
+	setProps = (nextProps: T) => {
+		if (!nextProps) return;
+
+		this._meta.prevProps = this._meta.props;
+		this._meta.props = nextProps;
+		// this._lookForChildren();
+		Object.keys(nextProps).forEach((key) => {
+			if (!(key in (this._meta.prevProps as T))) delete this.props[key];
+
+		});
+
+		Object.assign(this.props, nextProps);
+	};
+
+	get element() {
+		return this._element;
+	}
+
+	abstract render(): DocumentFragment;
+
+	_render() {
+		const block = this.render();
+
+		this._removeListeners();
+		this._mountChildren(block as any);
+
+		if (this._element) {
+			this._element.innerHTML = '';
+			this._element.append(block);
 		}
+
+		this._addListeners();
+	}
+
+	// Может переопределять пользователь, необязательно трогать
+
+	getContent() {
+		return this.element;
+	}
+
+	_manageUpdateChildren<S>(name: keyof S, target: S, newValue: unknown): boolean {
+		const oldValue = target[name] as unknown;
+		if (
+			oldValue
+			&& typeof oldValue === 'object'
+			&& oldValue instanceof Block
+		) if (oldValue === newValue) return true;
+
+		// here we can dispatch on nested node component will unmout
+
+		if (
+			typeof newValue === 'object'
+			&& newValue instanceof Block
+		) this._children[name as string] = newValue;
+
+		return false;
+	}
+
+	_makePropsProxy(userProps: T) {
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define
+		const props = deepClone(userProps, limitDeepCopy);
+		let timeoutUpdate: null | number = null;
+		const emitCDU = () => {
+			this._eventBus().emit(
+				Block.EVENTS.FLOW_CDU,
+				this._meta.prevProps,
+				this._meta.props
+			);
+			timeoutUpdate = null;
+		};
+
+		const debounceWrapper = () => {
+			// eslint-disable-next-line @typescript-eslint/no-use-before-define
+			if (!timeoutUpdate) timeoutUpdate = debounceInvokeFunction(emitCDU);
+
+		};
+
+		const self = this;
+
+		const proxyProps = new Proxy(props, {
+			get(target, propertyName) {
+				const value = target[propertyName as keyof typeof target];
+				return typeof value === 'function' ? value.bind(target) : value;
+			},
+			set(target, propertyName, newValue) {
+				if (typeof propertyName === 'symbol') throw new Error('props key must be string');
+
+				// if return true it's meaning that children are equal
+				const breakCycle =					self._manageUpdateChildren(propertyName, target, newValue);
+
+				if (breakCycle) return true;
+
+				target[propertyName as keyof typeof target] = newValue;
+				emitCDU();
+				return true;
+			},
+			deleteProperty(target, propertyName) {
+				if (typeof propertyName === 'symbol') throw new Error('props key must be string');
+
+				if (!(propertyName in target)) throw new Error('property that you try to delete does\'t exist in target object');
+				const value = target[propertyName];
+
+				if (
+					typeof value === 'object'
+					&& value instanceof Block
+				) delete self._children[propertyName];
+
+				delete target[propertyName as keyof typeof target];
+				debounceWrapper();
+				return true;
+			}
+		});
+
+		return proxyProps;
+	}
+
+	// eslint-disable-next-line class-methods-use-this
+	_createDocumentElement(tagName: string) {
+		// Можно сделать метод, который через фрагменты в цикле создаёт сразу несколько блоков
+		return document.createElement(tagName);
+	}
+
+	show() {
+		const el = this.getContent();
+		if (el) el.style.display = 'block';
+
 	}
 
 	hide() {
 		const el = this.getContent();
-		if (el) {
-			el.style.display = 'none';
-		}
+		if (el) el.style.display = 'none';
+
 	}
 
 	toString() {
-		return `<div data-id="${this.id}"></div>`
+		return `<div data-id="${this.id}"></div>`;
+	}
+	[Symbol.toPrimitive]() {
+		return `<div data-id="${this.id}"></div>`;
 	}
 }
 
-const debounceInvokeFunction = (callback: () => void, delay = 0) => {
-  const timeout = setTimeout(() => {
-    callback();
-  }, delay);
+const debounceInvokeFunction = (callback: ()=> void, delay = 0) => {
+	const timeout = setTimeout(() => {
+		callback();
+	}, delay);
 
-  return timeout;
-}
+	return timeout;
+};
 
+const limitDeepCopy = (value: unknown): boolean => !(!!value
+	&& typeof value === 'object'
+	&& value instanceof Block);
+
+export default Block;
 
 type TKey = keyof any;
 
@@ -268,20 +362,25 @@ type ObjectTarget = { [key: TKey]: unknown }
 
 type TargetType = ArrTarget | ObjectTarget;
 
-const deepClone = <T extends TargetType>(target: T): T => {
+const deepClone = <T extends TargetType>(
+	target: T,
+	limitation?: (arg: ObjectTarget)=> boolean
+): T => {
 	function isObjectOrArray(item: unknown): item is TargetType {
 		return (typeof item === 'object' || Array.isArray(item)) && !!item;
 	}
 
 	const handleObject = () => Object.entries(target)
 		.reduce((acc, [key, value]) => {
-			acc[key] = isObjectOrArray(value) ? deepClone(value) : value;
+			acc[key] = isObjectOrArray(value)
+				&& (!limitation || (!Array.isArray(value) && limitation(value)))
+				? deepClone(value, limitation)
+				: value;
 			return acc;
 		}, {} as ObjectTarget) as T;
 
-
-	const handleArray = (arr: unknown[]) =>
-		arr.map(item => isObjectOrArray(item) ? deepClone(item) : item) as T;
+	const handleArray =	(arr: unknown[]) => arr
+		.map((item) => (isObjectOrArray(item) ? deepClone(item, limitation) : item)) as T;
 
 	return Array.isArray(target) ? handleArray(target) : handleObject();
 };

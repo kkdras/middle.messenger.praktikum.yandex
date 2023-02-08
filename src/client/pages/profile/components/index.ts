@@ -1,2 +1,2 @@
-export { default as Input } from './input';
-export { default as Button } from './button';
+// eslint-disable-next-line import/prefer-default-export
+export { default as Form } from './form';

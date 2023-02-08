@@ -132,15 +132,28 @@ abstract class Block<T extends PropsType = {}> {
 
 	_addListeners() {
 		const prevEvents = this._meta.prevProps?.events || {};
-		const newEvents = this._meta.props?.events || {};
+		const newEvents = this.props?.events || {};
+
+		const onFirstChildrenPrev = !!(prevEvents as any).listenOnFirstChildren as boolean;
+		const onFirstChildrenNow = !!(newEvents as any).listenOnFirstChildren as boolean;
+
+		const target = !onFirstChildrenNow
+			? this.getContent()
+			: this.getContent()?.firstElementChild;
+
+		(target as any).__BlockInstance = this;
 
 		Object.keys(newEvents).forEach((eventName) => {
 			const newHandler = newEvents[eventName as keyof typeof newEvents];
 			const prevHandler = prevEvents[eventName as keyof typeof newEvents];
+			if (eventName === 'listenOnFirstChildren') return;
 
-			if (newHandler === prevHandler) return;
+			if (
+				newHandler === prevHandler
+				&& onFirstChildrenNow === onFirstChildrenPrev
+			) return;
 
-			this.getContent()?.addEventListener(eventName, newHandler);
+			target?.addEventListener(eventName, newHandler);
 		});
 	}
 
@@ -148,14 +161,23 @@ abstract class Block<T extends PropsType = {}> {
 		const prevEvents = this._meta.prevProps?.events || {};
 		const newEvents = this._meta.props?.events || {};
 
+		const onFirstChildrenPrev = !!(prevEvents as any).listenOnFirstChildren as boolean;
+		const onFirstChildrenNow = !!(newEvents as any).listenOnFirstChildren as boolean;
 		Object.keys(prevEvents).forEach((eventName) => {
 			const newHandler = newEvents[eventName as keyof typeof newEvents];
 			const prevHandler = prevEvents[eventName as keyof typeof newEvents];
+			if (eventName === 'listenOnFirstChildren') return;
 
-			// eslint-disable-next-line curly
-			if (newHandler !== prevHandler) {
-				this.getContent()?.removeEventListener(eventName, prevHandler);
-			}
+			if (
+				newHandler === prevHandler
+				&& onFirstChildrenNow === onFirstChildrenPrev
+			) return;
+
+			const target = !onFirstChildrenNow
+				? this.getContent()
+				: this.getContent()?.firstElementChild;
+
+			target?.removeEventListener(eventName, prevHandler);
 		});
 	}
 

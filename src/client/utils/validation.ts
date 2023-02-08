@@ -10,73 +10,49 @@ export const PHONE_PATTERN = '^\\+?\\d{10,15}$';
 
 export const PASSWORD_PATTERN = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$';
 
-type HandlerType = (e: Event)=> void
+export const nameError = 'Первая буква должна быть заглавной, только буквы';
 
-export const addValidation = (
-	target: HTMLElement,
-	onFocus: HandlerType,
-	onBlur: HandlerType
-) => {
-	if (!target) throw new Error('input el not found');
+export const loginError = 'От 3 до 20 символов, латиница, цыфры и буквы';
 
-	target.addEventListener('focus', onFocus);
-	target.addEventListener('blur', onBlur);
+export const emailError = 'Невалидный email';
 
-	return () => {
-		target.removeEventListener('focus', onFocus);
-		target.removeEventListener('blur', onBlur);
-	};
-};
+export const passwordError = 'От 8 до 40 символов, хотя бы одна заглавная буква и цифра.';
 
+export const phoneError = 'От 10 до 15 символов, цыфры, может начинается с плюса.';
+
+export const requiredError = 'Это поле обязательно к заполнению';
 const baseEffect = (e: Event) => {
 	(e.target as HTMLInputElement).checkValidity();
 };
 export const baseOnFocus = (e: Event) => baseEffect(e);
 export const baseOnBlur = (e: Event) => baseEffect(e);
 
-export class ValidationMixin {
-	checkValidityOnSubmit(this: Block, valid: boolean) {
-		const container = this.getContent() as HTMLElement;
-		const input = container.querySelector('input');
-		if (!input) {
-			console.error('input element not found');
-			return;
-		}
-		if (!valid) input.checkValidity();
-
-		this._eventBus().emit('submitted');
-	}
-
-	componentDidMount(this: Block): void {
-		const container = this.getContent() as HTMLElement;
-		const input = container.querySelector('input');
-
-		if (!input) {
-			console.error('input element not found');
-			return;
-		}
-
-		input.addEventListener('input', () => {
-			input.parentElement!.classList.remove('invalid');
-		});
-
-		const removeBaseValidation = addValidation(input, baseOnFocus, baseOnBlur);
-
-		this._eventBus().on('submitted', () => {
-			removeBaseValidation();
-		});
-
-		input.addEventListener('invalid', () => {
-			input.parentElement!.classList.add('invalid');
-		});
-	}
+// eventBus назначит сам Block
+export type InputHandlers = {
+	[key in keyof HTMLElementEventMap]?: (this: HTMLInputElement, e: InputEvent)=> void
 }
+
+export const BaseInputHandlers: InputHandlers = {
+	input(e) {
+		const blockInstance = ((e.target as any).__BlockInstance || null) as Block | null;
+		blockInstance?._eventBus()?.emit?.('valid');
+	},
+	focus(e: Event) {
+		(e.target as HTMLInputElement)?.checkValidity();
+	},
+	blur(e: Event) {
+		(e.target as HTMLInputElement)?.checkValidity();
+	},
+	invalid(e) {
+		const blockInstance = ((e.target as any).__BlockInstance || null) as Block | null;
+		blockInstance?._eventBus()?.emit('invalid');
+	}
+};
 
 export function handleSubmit(this: Block, e: Event) {
 	e.preventDefault();
 	const form = (e.target as HTMLFormElement);
 	const isValid = form.checkValidity();
-
 	if (isValid) {
 		console.log(
 			JSON.stringify(
@@ -89,7 +65,4 @@ export function handleSubmit(this: Block, e: Event) {
 		);
 		form.reset();
 	}
-	Object.values(this._children).forEach((item) => {
-		if ((item as any).checkValidityOnSubmit) (item as any).checkValidityOnSubmit(isValid);
-	});
 }

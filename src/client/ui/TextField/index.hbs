@@ -2,16 +2,8 @@
 	<label class="{{class.fieldLabel}}" for="{{id}}">
 		{{label}}
 	</label>
-	<input
-		pattern="{{pattern}}"
-		name="{{id}}"
-		type="{{type}}"
-		id="{{id}}"
-		class="{{class.fieldInput}}"
-		type="text"
-		maxlength="{{maxLength}}"
-		minlength="{{minLength}}"
-		required="{{required}}"
-		placeholder="{{placeholder}}"
-	>
+	{{{children}}}
+	<div class="{{class.errorContainer}}">
+		<p id="error" class="{{class.errorBody}}">{{errorMessage}}</p>
+	</div>
 </div>

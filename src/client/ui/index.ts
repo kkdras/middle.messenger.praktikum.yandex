@@ -4,3 +4,4 @@ export type { ButtonPropsType } from './button';
 export { default as TextField } from './TextField';
 export type { TextFieldProps } from './TextField';
 export { default as Container } from './container';
+export { default as BaseInput } from './baseInput';

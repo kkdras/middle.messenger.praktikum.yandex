@@ -5,18 +5,6 @@
 		</a>
 	</div>
 	<div class="{{class.profile}}">
-		<form novalidate class="{{class.profileBody}}">
-			<div class="{{class.profileHeader}}">
-				<div class="{{class.profileAvatar}} ibg">
-						<img src="{{avatarImg}}" alt="userAvatar">
-						<input type="file">
-				</div>
-				<div class="{{class.profileName}}">{{name}}</div>
-			</div>
-			<div>
-				<div class="{{class.profileData}}">{{{fields}}}</div>
-				<div>{{{actions}}}</div>
-			</div>
-		</form>
+		{{{children}}}
 	</div>
 </div>

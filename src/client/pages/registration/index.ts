@@ -6,22 +6,69 @@ import * as style from './style.module.scss';
 import { Block } from '../../packages';
 
 import {
-	EMAIL_PATTERN, handleSubmit, LOGIN_PATTERN, NAME_PATTERN, PASSWORD_PATTERN, PHONE_PATTERN
+	emailError,
+	EMAIL_PATTERN,
+	handleSubmit,
+	loginError,
+	LOGIN_PATTERN,
+	nameError,
+	NAME_PATTERN,
+	passwordError,
+	PASSWORD_PATTERN,
+	phoneError,
+	PHONE_PATTERN
 } from '../../utils/validation';
 
 const fields: TextFieldProps[] = [
-	{ label: 'Почта', id: 'email', pattern: EMAIL_PATTERN },
 	{
-		label: 'Логин', id: 'login', pattern: LOGIN_PATTERN, minLength: 3, maxLength: 20
-	},
-	{ label: 'Имя', id: 'first_name', pattern: NAME_PATTERN },
-	{ label: 'Фамилия', id: 'second_name', pattern: NAME_PATTERN },
-	{ label: 'Телефон', id: 'phone', pattern: PHONE_PATTERN },
-	{
-		label: 'Пароль', id: 'password', type: 'password', pattern: PASSWORD_PATTERN, minLength: 8, maxLength: 40
+		label: 'Почта',
+		id: 'email',
+		pattern: EMAIL_PATTERN,
+		errorMessage: emailError
 	},
 	{
-		label: 'Пароль (ещё раз)', id: 'passwordExamination', type: 'password', pattern: PASSWORD_PATTERN, minLength: 8, maxLength: 40
+		label: 'Логин',
+		id: 'login',
+		pattern: LOGIN_PATTERN,
+		minLength: 3,
+		maxLength: 20,
+		errorMessage: loginError
+	},
+	{
+		label: 'Имя',
+		id: 'first_name',
+		pattern: NAME_PATTERN,
+		errorMessage: nameError
+	},
+	{
+		label: 'Фамилия',
+		id: 'second_name',
+		pattern: NAME_PATTERN,
+		errorMessage: nameError
+	},
+	{
+		label: 'Телефон',
+		id: 'phone',
+		pattern: PHONE_PATTERN,
+		errorMessage: phoneError
+	},
+	{
+		label: 'Пароль',
+		id: 'password',
+		type: 'password',
+		pattern: PASSWORD_PATTERN,
+		minLength: 8,
+		maxLength: 40,
+		errorMessage: passwordError
+	},
+	{
+		label: 'Пароль (ещё раз)',
+		id: 'passwordExamination',
+		type: 'password',
+		pattern: PASSWORD_PATTERN,
+		minLength: 8,
+		maxLength: 40,
+		errorMessage: passwordError
 	}
 ];
 
@@ -41,14 +88,11 @@ class RegistrationPage extends Block {
 				form: style.form,
 				formTitle: style.form__title
 			},
-			...args
+			...args,
+			events: {
+				submit: handleSubmit
+			}
 		});
-	}
-
-	componentDidMount(): void {
-		const form = this.getContent()?.querySelector('form');
-		if (!form) console.error('form not found');
-		form?.addEventListener('submit', handleSubmit.bind(this));
 	}
 
 	render(): DocumentFragment {

@@ -1,23 +1,22 @@
 @import url('./../../../../styles/style.scss');
 
-.input {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	min-height: 34px;
-	padding: 5px 0;
-	width: 100%;
-
-	border-bottom: 1px solid #EAEAEA;
-
-	label {
-		color: var(--bright-color from global);
-		font-size: 14px;
-		font-weight: 500;
-		cursor: pointer;
+.inputContainer {
+	&__body {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		min-height: 34px;
+		padding: 5px 0;
+		width: 100%;
+		label {
+			color: var(--bright-color from global);
+			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+		}
 	}
 
-	input {
+	&__input {
 		flex: 1 1 auto;
 		font-size: 14px;
 		color: var(--second-color from global);
@@ -26,11 +25,33 @@
 		text-align: right;
 		background-color: none;
 	}
+
+	&__errorContainer {
+		position: relative;
+		border-top: 1px solid #EAEAEA;
+	}
+
+	&__errorBody {
+		opacity: 0;
+		visibility: hidden;
+		color: var(--wrong-color from global);
+		padding-top: 2px;
+		font-size: 12px;
+	}
 }
 
-.input:global(.invalid) {
-	border-bottom-color: red;
+.inputContainer:global(.invalid) .inputContainer__errorContainer{
+	border-color: var(--wrong-color from global);
 	input {
-		color: red;
+		color: var(--wrong-color from global);
 	}
+}
+
+.inputContainer:global(.invalid) .inputContainer__errorBody {
+	opacity: 1;
+	visibility: visible;
+}
+
+.inputContainer:global(.invalid) .inputContainer__input{
+	color: var(--wrong-color from global);
 }

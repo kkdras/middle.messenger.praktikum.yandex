@@ -1,0 +1,45 @@
+
+.profile {
+	width: 100%;
+	display: flex;
+	justify-content:center;
+	align-items: center;
+	padding: 20px;
+
+	&__body {
+		flex: 1 1 auto;
+		max-width: 600px;
+	}
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-bottom: 50px;
+
+		input {
+				opacity: 0;
+				visibility: hidden;
+		}
+	}
+
+	&__headerAvatar {
+		width: 130px;
+		height: 130px;
+		background-color: var(--bright-gray-background from global);
+		border-radius: 50%;
+		overflow: hidden;
+		margin-bottom: 20px;
+	}
+
+	&__headerName {
+		color: var(--bright-color from global);
+		font-size: 18px;
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	&__data {
+		margin-bottom: 50px;
+	}
+}

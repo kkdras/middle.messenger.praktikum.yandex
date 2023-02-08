@@ -1,0 +1,59 @@
+@import url("./../../styles/style.scss");
+
+.field{
+	width: 100%;
+	transition: all 0.3s ease 0s;
+	position: relative;
+
+	&__label {
+		color: var(--second-color from global);
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 1;
+	}
+
+	&__input {
+		background: none;
+		border: 0px;
+		width: 100%;
+		height: 30px;
+		font-size: 14px;
+		outline: none;
+		height: 20px;
+	}
+
+	&_error &__input {
+		color: var(--wrong-color from global);
+	}
+
+	&__errorContainer {
+		position: relative;
+		&::after {
+			content: '';
+			display: block;
+			height: 1px;
+			width: 100%;
+			background-color: var(--primary-color from global);
+			position: absolute;
+			top: 0;
+		}
+	}
+
+	&__errorBody {
+		opacity: 0;
+		visibility: hidden;
+		color: var(--wrong-color from global);
+		padding-top: 2px;
+		font-size: 12px;
+	}
+}
+
+.field:global(.invalid) .field__errorContainer{
+	&::after {
+		background-color: var(--wrong-color from global);
+	}
+}
+.field:global(.invalid) .field__errorBody{
+	opacity: 1;
+	visibility: visible;
+}

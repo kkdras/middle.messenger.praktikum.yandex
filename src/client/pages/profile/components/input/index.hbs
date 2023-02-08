@@ -1,4 +1,9 @@
-<div class="{{class.input}}">
-   <label for="{{id}}">{{label}}</label>
-   <input value="{{value}}" type="{{type}}" id="{{id}}">
+<div class="{{class.inputContainer}}">
+	<div class="{{class.inputBody}}">
+		<label for="{{id}}">{{label}}</label>
+		{{{children}}}
+	</div>
+	<div class="{{class.errorContainer}}">
+		<p class="{{class.errorBody}}">{{errorMessage}}</p>
+	</div>
 </div>

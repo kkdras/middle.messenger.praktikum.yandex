@@ -1,76 +1,39 @@
 @import url('./../../styles/style.scss');
 
 .pageContainer {
-   width: 100%;
-   min-height: 100%;
-   display: flex;
+	width: 100%;
+	min-height: 100%;
+	display: flex;
 }
 
 .leftBar {
-   transition: all 0.3s ease 0s;
-   flex: 0 0 40px;
-   width: 40px;
-   background-color: var(--dim-gray-background from global);
-   border-right: 1px solid var(--main-border-color from global);
-   display: flex;
-   align-items: center;
-   justify-content: center;
+	transition: all 0.3s ease 0s;
+	flex: 0 0 40px;
+	width: 40px;
+	background-color: var(--dim-gray-background from global);
+	border-right: 1px solid var(--main-border-color from global);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-   a {
-      text-decoration: none;
-      width: 28px;
-      height: 28px;
-      overflow: hidden;
-      border-radius: 50%;
-   }
+	a {
+		text-decoration: none;
+		width: 28px;
+		height: 28px;
+		overflow: hidden;
+		border-radius: 50%;
+	}
 
-   @media (min-width: 768px){
-      flex: 0 0 64px;
-      width: 64px;
-   }
+	@media (min-width: 768px){
+		flex: 0 0 64px;
+		width: 64px;
+	}
 }
 
-.profile {
-   width: 100%;
-   display: flex;
-   justify-content:center;
-   align-items: center;
-   padding: 20px;
-
-   &__body {
-      flex: 1 1 auto;
-      max-width: 600px;
-   }
-
-   &__header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 50px;
-
-      input {
-         opacity: 0;
-         visibility: hidden;
-      }
-   }
-
-   &__headerAvatar {
-      width: 130px;
-      height: 130px;
-      background-color: var(--bright-gray-background from global);
-      border-radius: 50%;
-      overflow: hidden;
-      margin-bottom: 20px;
-   }
-
-   &__headerName {
-      color: var(--bright-color from global);
-      font-size: 18px;
-      font-weight: 600;
-      line-height: 1;
-   }
-
-   &__data {
-      margin-bottom: 50px;
-   }
+.profile, .profile > div {
+	width: 100%;
+	display: flex;
+	justify-content:center;
+	align-items: center;
+	padding: 20px;
 }

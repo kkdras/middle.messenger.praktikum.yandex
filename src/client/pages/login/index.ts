@@ -1,17 +1,35 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
 import { Block } from '../../packages';
-import { handleSubmit, LOGIN_PATTERN, PASSWORD_PATTERN } from '../../utils/validation';
+import {
+	handleSubmit,
+	loginError,
+	LOGIN_PATTERN,
+	PASSWORD_PATTERN,
+	passwordError
+} from '../../utils/validation';
 import {
 	Button, ButtonPropsType, Card, Container, TextField, TextFieldProps
 } from '../../ui';
 
 const fields: TextFieldProps[] = [
 	{
-		id: 'login', label: 'Логин', type: 'text', pattern: LOGIN_PATTERN, minLength: 3, maxLength: 20
+		id: 'login',
+		label: 'Логин',
+		type: 'text',
+		pattern: LOGIN_PATTERN,
+		minLength: 3,
+		maxLength: 20,
+		errorMessage: loginError
 	},
 	{
-		id: 'password', label: 'Пароль', type: 'password', pattern: PASSWORD_PATTERN, minLength: 8, maxLength: 40
+		id: 'password',
+		label: 'Пароль',
+		type: 'password',
+		pattern: PASSWORD_PATTERN,
+		minLength: 8,
+		maxLength: 40,
+		errorMessage: passwordError
 	}
 ];
 
@@ -31,14 +49,11 @@ class LoginPage extends Block {
 				form: style.form,
 				formTitle: style.form__title
 			},
-			...args
+			...args,
+			events: {
+				submit: handleSubmit
+			}
 		});
-	}
-
-	componentDidMount(): void {
-		const form = this.getContent()?.querySelector('form');
-		if (!form) console.error('form not found');
-		form?.addEventListener('submit', handleSubmit.bind(this));
 	}
 
 	render(): DocumentFragment {

@@ -8,6 +8,8 @@ declare module '*.scss' {
 	export default classes
 }
 
+declare const process = { env: { NODE_ENV: string } };
+
 // namespace Handlebars {
 // 	compile: 
 // }

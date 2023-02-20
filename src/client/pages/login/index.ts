@@ -68,7 +68,7 @@ const CurrentPage = new LoginPage({
 	]
 });
 
-export default new Container({
+export default () => new Container({
 	children: new Card({
 		children: CurrentPage
 	})

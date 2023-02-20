@@ -107,8 +107,6 @@ const Page = new RegistrationPage({
 	]
 });
 
-const containerInstance = new Container({
+export default () => new Container({
 	children: new Card({ children: Page })
 });
-
-export default containerInstance;

@@ -32,7 +32,7 @@ class ProfilePage extends Block {
 	}
 }
 
-const page = new ProfilePage({
+export default () => new ProfilePage({
 	href: '/',
 	leftBarImg: arrowImg,
 	children: new Form({
@@ -40,5 +40,3 @@ const page = new ProfilePage({
 		name: 'Константин'
 	})
 });
-
-export default page;

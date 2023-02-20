@@ -38,7 +38,7 @@ const page = new RegistrationPage({
 	children: links.map((item) => new Link(item))
 });
 
-export default new Container({
+export default () => new Container({
 	children: new Card({
 		children: page
 	})

@@ -101,7 +101,7 @@ const input = new TextField({
 	placeholder: 'Введите сообщение'
 });
 
-export default new ChatPage({
+export default () => new ChatPage({
 	addButton,
 	users: users.map((item) => new UserBanner(item)),
 	submitButton,

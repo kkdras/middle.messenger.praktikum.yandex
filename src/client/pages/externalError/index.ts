@@ -8,8 +8,6 @@ const CurrentPage = new Error({
 	href: '/'
 });
 
-const containerInstance = new Container({
+export default () => new Container({
 	children: CurrentPage
 });
-
-export default containerInstance;

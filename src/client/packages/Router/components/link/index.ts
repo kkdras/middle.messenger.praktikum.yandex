@@ -1,0 +1,37 @@
+import tmpl from 'bundle-text:./index.hbs';
+import Router from '../../Router';
+import Block from '../../../Block';
+import { classNames } from '../../../../utils';
+
+type PropsType = {
+	classes?: Parameters<typeof classNames>;
+	href: string;
+	events?: Record<string, (e: Event)=> void>;
+	children: string
+};
+
+const router = new Router();
+
+class RouterLink extends Block {
+	constructor({ events = {}, classes = [], ...props }: PropsType) {
+		super('div', {
+			class: classNames(classes),
+			events: {
+				click: (e: Event) => {
+					e.preventDefault();
+					const path = (e.target as HTMLAnchorElement).href.replace(document.location.origin, '');
+					router.go(path);
+				},
+				listenOnChildOfTreePosition: 1,
+				...events
+			},
+			...props
+		});
+	}
+
+	render() {
+		return Block.compile(tmpl, this.props);
+	}
+}
+
+export default RouterLink;

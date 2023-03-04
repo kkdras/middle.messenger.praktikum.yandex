@@ -3,8 +3,24 @@ import { v4 } from 'uuid';
 import Handlebars from 'handlebars';
 import EventBus, { IEventBus } from './Event-bus';
 
-type PropsType = Record<string, unknown>
-abstract class Block<T extends PropsType = {}> {
+type ExcludePrefix<T extends string> = string extends T
+	? string
+	: T extends ''
+		? T
+		: T extends `on${infer R}`
+			? R
+			: T
+
+type PropsType = Record<string, unknown> & {
+	events?: {
+		[eventName in keyof GlobalEventHandlers as ExcludePrefix<eventName>]?:
+		GlobalEventHandlers[eventName]
+	} & {
+		['listenOnChildOfTreePosition']?: number,
+	}
+}
+
+abstract class Block<T extends PropsType = PropsType> {
 	static EVENTS = {
 		INIT: 'init',
 		FLOW_CDM: 'flow:component-did-mount',
@@ -130,30 +146,45 @@ abstract class Block<T extends PropsType = {}> {
 		eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
 	}
 
+	// listenOnChildOfTreePosition
+	// default is 0 it mean that events will be listen on
+	// 0 element that is dom container of current component
+	// overwise will find the last children for indicated steps
+	// for example if component tree is <div><span><a></a></span><input /></div> and
+	// size is 6 element that will be listen is first a tag
 	_addListeners() {
 		const prevEvents = this._meta.prevProps?.events || {};
 		const newEvents = this.props?.events || {};
 
-		const onFirstChildrenPrev = !!(prevEvents as any).listenOnFirstChildren as boolean;
-		const onFirstChildrenNow = !!(newEvents as any).listenOnFirstChildren as boolean;
+		const onFirstChildrenPrev = prevEvents.listenOnChildOfTreePosition ?? 0;
+		const onFirstChildrenNow = newEvents.listenOnChildOfTreePosition ?? 0;
 
-		const target = !onFirstChildrenNow
-			? this.getContent()
-			: this.getContent()?.firstElementChild;
+		let target = this.getContent();
+		let i = onFirstChildrenNow;
+		while (target && i > 0) {
+			const newTarget = target.firstElementChild;
+			if (!newTarget) break;
+			target = newTarget as HTMLElement;
+			i -= 1;
+		}
+
+		if (!target) return;
 
 		(target as any).__BlockInstance = this;
 
 		Object.keys(newEvents).forEach((eventName) => {
 			const newHandler = newEvents[eventName as keyof typeof newEvents];
-			const prevHandler = prevEvents[eventName as keyof typeof newEvents];
-			if (eventName === 'listenOnFirstChildren') return;
+			const prevHandler = prevEvents[eventName as keyof typeof prevEvents];
 
 			if (
-				newHandler === prevHandler
-				&& onFirstChildrenNow === onFirstChildrenPrev
+				typeof newHandler !== 'function'
+				|| (
+					newHandler === prevHandler
+					&& onFirstChildrenNow === onFirstChildrenPrev
+				)
 			) return;
 
-			target?.addEventListener(eventName, newHandler);
+			target?.addEventListener(eventName, newHandler as EventListenerOrEventListenerObject);
 		});
 	}
 
@@ -161,11 +192,22 @@ abstract class Block<T extends PropsType = {}> {
 		const prevEvents = this._meta.prevProps?.events || {};
 		const newEvents = this._meta.props?.events || {};
 
-		const onFirstChildrenPrev = !!(prevEvents as any).listenOnFirstChildren as boolean;
-		const onFirstChildrenNow = !!(newEvents as any).listenOnFirstChildren as boolean;
+		const onFirstChildrenPrev = prevEvents.listenOnChildOfTreePosition ?? 0;
+		const onFirstChildrenNow = newEvents.listenOnChildOfTreePosition ?? 0;
+
+		let target = this.getContent();
+		let i = onFirstChildrenNow;
+		while(i > 0 && target) {
+			const newElement = target.firstElementChild as HTMLElement;
+			if (newElement) target = newElement;
+			i -= 1;
+		}
+
+		if (!target) return;
 		Object.keys(prevEvents).forEach((eventName) => {
 			const newHandler = newEvents[eventName as keyof typeof newEvents];
-			const prevHandler = prevEvents[eventName as keyof typeof newEvents];
+			const prevHandler = prevEvents[eventName as keyof typeof prevEvents];
+
 			if (eventName === 'listenOnFirstChildren') return;
 
 			if (
@@ -173,11 +215,7 @@ abstract class Block<T extends PropsType = {}> {
 				&& onFirstChildrenNow === onFirstChildrenPrev
 			) return;
 
-			const target = !onFirstChildrenNow
-				? this.getContent()
-				: this.getContent()?.firstElementChild;
-
-			target?.removeEventListener(eventName, prevHandler);
+			target?.removeEventListener(eventName, prevHandler as EventListenerOrEventListenerObject);
 		});
 	}
 

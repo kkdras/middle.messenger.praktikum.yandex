@@ -4,3 +4,4 @@ export {
 	baseOnBlur, baseOnFocus, BaseInputHandlers, handleSubmit
 } from './validation';
 export type { InputHandlers } from './validation';
+export { default as render } from './render';

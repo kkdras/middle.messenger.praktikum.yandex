@@ -4,7 +4,7 @@ import { Error } from '../../components';
 const CurrentPage = new Error({
 	errorTitle: '500',
 	errorContent: 'Мы уже фиксим',
-	errorLink: 'Назад к чатам',
+	linkLabel: 'Назад к чатам',
 	href: '/'
 });
 

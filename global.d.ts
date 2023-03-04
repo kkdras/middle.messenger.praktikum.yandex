@@ -4,18 +4,14 @@ declare module '*.module.scss' {
 }
 
 declare module '*.scss' {
-	const classes: { readonly [key: string]: string }
-	export default classes
+	const classes: { readonly [key: string]: string };
+	export default classes;
 }
 
 declare const process = { env: { NODE_ENV: string } };
 
-// namespace Handlebars {
-// 	compile: 
-// }
-
 declare module 'bundle-text:./*' {
-	export default string
+	export default string;
 }
 
 declare module '*.jpg' {

@@ -49,7 +49,7 @@ export const BaseInputHandlers: InputHandlers = {
 	}
 };
 
-export function handleSubmit(this: Block, e: Event) {
+export function handleSubmit(e: Event) {
 	e.preventDefault();
 	const form = (e.target as HTMLFormElement);
 	const isValid = form.checkValidity();

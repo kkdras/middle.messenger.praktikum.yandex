@@ -1,6 +1,5 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-nested-ternary */
-import { Router } from './packages';
+import { Block, Router } from './packages';
+import { render } from './utils';
 import {
 	chat,
 	externalError,
@@ -13,15 +12,19 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import style from './styles/style.scss';
 
-const router = new Router('#root');
+const router = new Router();
 
 router
 	.use('/', defaultPage)
 	.use('/login', loginPage)
 	.use('/externalError', externalError)
-	.use('/notFound', notFound)
+	.use('/notFound', notFound, true)
 	.use('/chat', chat)
 	.use('/profile', profile)
 	.use('/registration', registrationPage);
+
+router.on(Router.Events.PATH_CHANGE, (activePage?: Block) => {
+	if (activePage) render('#root', activePage);
+});
 
 router.start();

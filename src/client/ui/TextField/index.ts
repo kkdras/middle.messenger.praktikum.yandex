@@ -16,7 +16,7 @@ export type TextFieldProps = {
 	minLength?: number,
 	required?: boolean,
 	placeholder?: string,
-	errorMessage: string
+	errorMessage?: string
 }
 
 class TextField extends Block {
@@ -29,6 +29,7 @@ class TextField extends Block {
 		placeholder,
 		required,
 		type,
+		errorMessage = '',
 		...args
 	}: TextFieldProps) {
 		super('div', {
@@ -52,6 +53,7 @@ class TextField extends Block {
 				required,
 				type
 			}),
+			errorMessage,
 			...args
 		});
 	}

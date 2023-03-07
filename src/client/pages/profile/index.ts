@@ -2,16 +2,18 @@ import tmp from 'bundle-text:./index.hbs';
 import * as styles from './style.module.scss';
 import arrowImg from '../../public/arrow.png';
 import avatarImg from '../../public/avatar.jpg';
-import {
-	handleSubmit
-} from '../../utils/validation';
+// import {
+// 	handleSubmit
+// } from '../../utils/validation';
 import { Block } from '../../packages';
 import { Form } from './components';
+import { Loader } from '../../ui';
 
 type PropsType = {
 	href: string,
 	leftBarImg: string,
-	children: Block
+	form: Block,
+	loader: Block,
 }
 
 class ProfilePage extends Block {
@@ -22,7 +24,7 @@ class ProfilePage extends Block {
 				leftBar: styles.leftBar,
 				profile: styles.profile
 			},
-			events: handleSubmit,
+			events: {},
 			...args
 		});
 	}
@@ -35,8 +37,9 @@ class ProfilePage extends Block {
 export default () => new ProfilePage({
 	href: '/',
 	leftBarImg: arrowImg,
-	children: new Form({
+	form: new Form({
 		avatarImg,
 		name: 'Константин'
-	})
+	}),
+	loader: new Loader({})
 });

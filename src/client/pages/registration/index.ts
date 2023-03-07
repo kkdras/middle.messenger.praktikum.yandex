@@ -1,4 +1,5 @@
 import tmp from 'bundle-text:./index.hbs';
+import { AuthController } from '../../controllers/auth';
 import {
 	Card, Container, TextField, TextFieldProps, Button, ButtonPropsType
 } from '../../ui';
@@ -8,7 +9,6 @@ import { Block } from '../../packages';
 import {
 	emailError,
 	EMAIL_PATTERN,
-	handleSubmit,
 	loginError,
 	LOGIN_PATTERN,
 	nameError,
@@ -79,6 +79,20 @@ const buttons: ButtonPropsType[] = [
 
 type PropsType = {
 	children: Block[]
+}
+
+export function handleSubmit(e: Event) {
+	e.preventDefault();
+	const form = (e.target as HTMLFormElement);
+	const isValid = form.checkValidity();
+	if (isValid) {
+		const data = Object.fromEntries(
+			new FormData(e.target as HTMLFormElement)
+		);
+
+		AuthController.SignUp(data as SignUp.body);
+		form.reset();
+	}
 }
 
 class RegistrationPage extends Block {

@@ -1,4 +1,7 @@
 // to do - realize infer types use mapped types
+
+import { Block } from '../packages';
+
 // eslint-disable-next-line import/prefer-default-export
 export const set = <T extends Record<string, unknown>>(
 	store: T,
@@ -43,3 +46,44 @@ export function isEqual(a: object, b: object): boolean {
 	}
 	return true;
 }
+
+type ArrTarget = unknown[];
+
+type ObjectTarget = { [key: string]: unknown }
+
+type TargetType = ArrTarget | ObjectTarget;
+
+export const deepClone = <T extends TargetType>(
+	target: T,
+	limitation?: (arg: ObjectTarget)=> boolean
+): T => {
+	function isObjectOrArray(item: unknown): item is TargetType {
+		return (typeof item === 'object' || Array.isArray(item)) && !!item;
+	}
+
+	const handleObject = () => Object.entries(target)
+		.reduce((acc, [key, value]) => {
+			acc[key] = isObjectOrArray(value)
+				&& (!limitation || (!Array.isArray(value) && limitation(value)))
+				? deepClone(value, limitation)
+				: value;
+			return acc;
+		}, {} as ObjectTarget) as T;
+
+	const handleArray =	(arr: unknown[]) => arr
+		.map((item) => (isObjectOrArray(item) ? deepClone(item, limitation) : item)) as T;
+
+	return Array.isArray(target) ? handleArray(target) : handleObject();
+};
+
+export const debounceInvokeFunction = (callback: ()=> void, delay = 0) => {
+	const timeout = setTimeout(() => {
+		callback();
+	}, delay);
+
+	return timeout;
+};
+
+export const limitDeepCopy = (value: unknown): boolean => !(!!value
+	&& typeof value === 'object'
+	&& value instanceof Block);

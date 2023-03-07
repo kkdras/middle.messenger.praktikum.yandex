@@ -1,4 +1,4 @@
-import { Connector, ConfigurateStore } from './packages';
+import { Connector, ConfigurateStore, Router } from './packages';
 
 const defaultStore = {
 	app: {
@@ -10,12 +10,18 @@ const defaultStore = {
 };
 
 export const Store = new ConfigurateStore(defaultStore);
-export const connect = new Connector(Store);
+const connector = new Connector(Store);
+const router = new Router();
+export type StateType = typeof defaultStore;
 
 export const errorHandler = (e: Error) => {
 	console.error(e);
 	if (process.env.NODE_ENV === 'production') {
 		alert('An error has occurred');
+		router.go('/externalError');
 	}
 	debugger;
 };
+
+export const loaderSelector = (store: StateType) => ({ loader: store.app.loader });
+export const withLoader = connector.connect(loaderSelector);

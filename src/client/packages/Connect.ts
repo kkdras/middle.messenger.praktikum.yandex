@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { isEqual } from '../utils';
+import { deepClone, isEqual, limitDeepCopy } from '../utils';
 import Block from './Block';
 import Store, { StoreType } from './Store';
 
@@ -24,10 +24,10 @@ class Connector<S extends InstanceType<StoreType>> {
 
 	connect<L extends Selector<S['_state']>>(selector: L) {
 		const store = this._store;
-		return <T extends abstract new (...args: any[])=> StoreType>(superClass: T) => {
+		return <T extends abstract new (...args: any[])=> Block>(superClass: T) => {
 			abstract class Connected extends superClass {
 				constructor(...args: any[]) {
-					const mappedStore = selector(store.getState() as S['_state']);
+					let mappedStore = deepClone(selector(store.getState() as S['_state']), limitDeepCopy);
 					super({
 						...args[0],
 						...mappedStore
@@ -37,7 +37,7 @@ class Connector<S extends InstanceType<StoreType>> {
 						const newMappedStore = selector(store.getState() as S['_state']);
 
 						if (isEqual(mappedStore, newMappedStore)) return;
-
+						mappedStore = newMappedStore;
 						(this as unknown as Block).setProps({ ...args[0], ...newMappedStore });
 					});
 				}

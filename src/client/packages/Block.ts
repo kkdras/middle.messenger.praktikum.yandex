@@ -2,6 +2,7 @@
 import { v4 } from 'uuid';
 import Handlebars from 'handlebars';
 import EventBus, { IEventBus } from './Event-bus';
+import { debounceInvokeFunction, deepClone, limitDeepCopy } from '../utils';
 
 type ExcludePrefix<T extends string> = string extends T
 	? string
@@ -266,7 +267,6 @@ abstract class Block<T extends PropsType = PropsType> {
 		// this._lookForChildren();
 		Object.keys(nextProps).forEach((key) => {
 			if (!(key in (this._meta.prevProps as T))) delete this.props[key];
-
 		});
 
 		Object.assign(this.props, nextProps);
@@ -400,47 +400,4 @@ abstract class Block<T extends PropsType = PropsType> {
 	}
 }
 
-const debounceInvokeFunction = (callback: ()=> void, delay = 0) => {
-	const timeout = setTimeout(() => {
-		callback();
-	}, delay);
-
-	return timeout;
-};
-
-const limitDeepCopy = (value: unknown): boolean => !(!!value
-	&& typeof value === 'object'
-	&& value instanceof Block);
-
 export default Block;
-
-type TKey = keyof any;
-
-type ArrTarget = unknown[];
-
-type ObjectTarget = { [key: TKey]: unknown }
-
-type TargetType = ArrTarget | ObjectTarget;
-
-const deepClone = <T extends TargetType>(
-	target: T,
-	limitation?: (arg: ObjectTarget)=> boolean
-): T => {
-	function isObjectOrArray(item: unknown): item is TargetType {
-		return (typeof item === 'object' || Array.isArray(item)) && !!item;
-	}
-
-	const handleObject = () => Object.entries(target)
-		.reduce((acc, [key, value]) => {
-			acc[key] = isObjectOrArray(value)
-				&& (!limitation || (!Array.isArray(value) && limitation(value)))
-				? deepClone(value, limitation)
-				: value;
-			return acc;
-		}, {} as ObjectTarget) as T;
-
-	const handleArray =	(arr: unknown[]) => arr
-		.map((item) => (isObjectOrArray(item) ? deepClone(item, limitation) : item)) as T;
-
-	return Array.isArray(target) ? handleArray(target) : handleObject();
-};

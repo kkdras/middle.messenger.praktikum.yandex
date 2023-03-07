@@ -23,8 +23,8 @@ class Store<T extends StoreRestrict> extends EventBus {
 	}
 
 	setState(path: string, value: unknown) {
-		this.emit(Store.EVENTS.Updated);
 		set(this._state, path, value);
+		this.emit(Store.EVENTS.Updated);
 		return this._state;
 	}
 }

@@ -41,7 +41,7 @@
 		"quotes": ["error", "single", { "allowTemplateLiterals": true }],
 		"@typescript-eslint/comma-dangle": 0,
 		"@typescript-eslint/dot-notation": 0,
-		"no-debugger": "error",
+		"no-debugger": "warn",
 		"padded-blocks": 0,
 		"no-tabs": 0,
 		"no-trailing-spaces": ["error", { "ignoreComments": true }],
@@ -49,6 +49,9 @@
 		"@typescript-eslint/member-delimiter-style": 0,
 		"@typescript-eslint/strict-boolean-expressions": 0,
 		"dot-notation:": 0,
-		"no-extra-semi:": 0
+		"no-extra-semi:": 0,
+		"class-methods-use-this": 0,
+		"import/prefer-default-export": 0,
+		"curly": 0
 	}
 }

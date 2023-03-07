@@ -346,7 +346,7 @@ abstract class Block<T extends PropsType = PropsType> {
 				if (typeof propertyName === 'symbol') throw new Error('props key must be string');
 
 				// if return true it's meaning that children are equal
-				const breakCycle =					self._manageUpdateChildren(propertyName, target, newValue);
+				const breakCycle = self._manageUpdateChildren(propertyName, target, newValue);
 
 				if (breakCycle) return true;
 

@@ -4,7 +4,6 @@ import { Block } from '../../../../packages';
 import { Button, ButtonPropsType } from '../button';
 import {
 	EMAIL_PATTERN,
-	handleSubmit,
 	loginError,
 	LOGIN_PATTERN,
 	nameError,
@@ -16,6 +15,7 @@ import {
 import { InputClass, InputPropsType } from '../input';
 import { StateType, withUserData } from '../../../../store';
 import avatarImg from '../../../../public/avatar.jpg';
+import { handleLogout, handleUpdateProfile } from './utils';
 
 type FieldsKeys = Exclude<keyof StateType['user'], 'avatar' | 'id'>
 
@@ -66,11 +66,20 @@ const fields: Record<FieldsKeys, InputPropsType & { instance?: InputClass }> = {
 	}
 };
 
-const buttons: ButtonPropsType[] = [
-	{ children: 'Изменить данные', type: 'submit' },
-	{ children: 'Изменить пароль' },
-	{ children: 'Выйти', type: 'warning' }
-];
+type ButtonsKeys = 'submit' | 'changePassword' | 'exit';
+const buttons: Record<ButtonsKeys, ButtonPropsType & { instance?: Button }> = {
+	submit: { children: 'Изменить данные', type: 'submit' },
+	changePassword: {
+		children: 'Изменить пароль'
+	},
+	exit: {
+		children: 'Выйти',
+		type: 'warning',
+		events: {
+			click: handleLogout
+		}
+	}
+};
 
 type PropsType = {
 	profileData: StateType['user'],
@@ -86,11 +95,17 @@ class ProfileForm extends Block {
 			return key;
 		}) as FieldsKeys[];
 
+		const buttonsKeys = Object.keys(buttons).map((key) => {
+			const defaultProps = buttons[key as ButtonsKeys];
+			buttons[key as ButtonsKeys].instance = new Button(defaultProps);
+			return key;
+		}) as ButtonsKeys[];
+
 		super('div', {
-			fields: fieldsKeys.map((item) => fields[item].instance),
-			actions: buttons.map((item) => new Button(item)),
+			fields: fieldsKeys.map((key) => fields[key].instance),
+			actions: buttonsKeys.map((key) => buttons[key].instance),
 			events: {
-				submit: handleSubmit
+				submit: handleUpdateProfile
 			},
 			profileData
 		});

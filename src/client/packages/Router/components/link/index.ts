@@ -19,7 +19,7 @@ class RouterLink extends Block {
 			events: {
 				click: (e: Event) => {
 					e.preventDefault();
-					const path = (e.target as HTMLAnchorElement).href.replace(document.location.origin, '');
+					const path = (e.currentTarget as HTMLAnchorElement).href.replace(document.location.origin, '');
 					router.go(path);
 				},
 				listenOnChildOfTreePosition: 1,

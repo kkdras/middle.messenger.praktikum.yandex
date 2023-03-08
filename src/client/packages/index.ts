@@ -6,3 +6,4 @@ export { default as HTTPTransport } from './Fetch';
 export { default as ConfigurateStore } from './Store';
 export type { StoreType } from './Store';
 export { default as Connector } from './Connect';
+export * from './Storage';

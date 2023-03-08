@@ -1,13 +1,14 @@
 declare namespace SignIn {
 	declare interface body {
+		[index: string]: string;
 		password: string;
 		login: string;
 	}
 }
 
 declare namespace SignUp {
-	declare interface body extends ISignInBody {
-		[index: string]
+	declare interface body extends SignIn.body {
+		[index: string];
 		first_name: string;
 		second_name: string;
 		email: string;
@@ -21,15 +22,4 @@ declare namespace SignUp {
 	declare interface error {
 		reason: string;
 	}
-}
-
-declare interface IProfileData {
-	id: number;
-	first_name: string;
-	second_name: string;
-	display_name: string | null;
-	login: string;
-	avatar: string | null;
-	email: string;
-	phone: string;
 }

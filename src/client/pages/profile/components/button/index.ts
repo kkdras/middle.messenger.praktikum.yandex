@@ -1,36 +1,20 @@
-import Handlebars from 'handlebars';
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
 import { classNames } from '../../../../utils';
 import { Block } from '../../../../packages';
 
-export default ({
-	text = '',
-	type = '',
-	classes = [],
-	...props
-}) => Handlebars.compile(tmp)({
-	class: {
-		btn: classNames(style.btn, classes),
-		btnItem: classNames(
-			style.btn__item,
-			{ [style.btn__item_warning]: type === 'warning' }
-		)
-	},
-	text,
-	...props
-});
-
 export type ButtonPropsType = {
 	children: string | Block,
 	type?: HTMLButtonElement['type'],
 	classes?: string[],
+	events?: Record<string, (...args: any[])=> void>
 }
 
 export class Button extends Block {
 	constructor({
 		classes = [],
 		type = 'button',
+		events = {},
 		...args
 	}: ButtonPropsType) {
 		super('div', {
@@ -43,6 +27,10 @@ export class Button extends Block {
 			},
 			classes,
 			type,
+			events: {
+				...events,
+				listenOnChildOfTreePosition: 1
+			},
 			...args
 		});
 	}

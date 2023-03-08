@@ -1,1 +1,10 @@
-declare type IResponse<T> = T;
+declare type IResponse<T> = {
+	json: T,
+	status: number
+};
+
+declare interface IPasswordBody {
+	[index: string]: string
+	oldPassword: string
+	newPassword: string
+}

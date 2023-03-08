@@ -24,6 +24,7 @@ type OptionsType = {
 	timeout?: number;
 	headers?: Record<string, string>;
 	method?: METHOD;
+	parseResult?: boolean;
 };
 
 const { BASE_PATH } = process.env;
@@ -38,47 +39,49 @@ class HTTPTransport {
 		this.basePath = BASE_PATH + pathPrefix;
 	}
 
-	get = <T>(url: string, options: OptionsType = {}) => {
+	async get<T = unknown>(url: string, options: OptionsType = {}) {
 		const { data = {} } = options;
-		return this.request(
+		return this.request<T>(
 			this.basePath + url + queryStringify(data),
 			{ ...options, method: METHOD.GET },
 			options.timeout
-		) as Promise<IResponse<T>>;
-	};
+		);
+	} ;
 
-	put = <T>(url: string, options: OptionsType = {}) => (
-		this.request(
+	async put<T = unknown>(url: string, options: OptionsType = {}) {
+		return this.request<T>(
 			this.basePath + url,
 			{
 				...options,
 				method: METHOD.PUT
 			},
 			options.timeout
-		) as Promise<IResponse<T>>
-	);
+		);
+	}
 
-	post = <T>(url: string, options: OptionsType = {}) => (
-		this.request(
+	async post<T = unknown>(url: string, options: OptionsType = {}) {
+		return this.request<T>(
 			this.basePath + url,
 			{ ...options, method: METHOD.POST },
 			options.timeout
-		) as Promise<IResponse<T>>
-	);
+		);
+	};
 
-	delete = <T>(url: string, options: OptionsType = {}) => (
-		this.request(
+	async delete<T = unknown>(url: string, options: OptionsType = {}) {
+		this.request<T>(
 			this.basePath + url,
 			{
 				...options,
 				method: METHOD.DELETE
 			},
 			options.timeout
-		) as Promise<IResponse<T>>
-	);
+		);
+	};
 
-	request = (url: string, options: OptionsType, timeout = 5000) => {
-		const { headers = defaultHeaders, data, method = METHOD.GET } = options;
+	async request<T>(url: string, options: OptionsType, timeout = 5000) {
+		const {
+			headers = defaultHeaders, data, method = METHOD.GET, parseResult = true
+		} = options;
 
 		const isFormData = data instanceof FormData;
 
@@ -89,7 +92,7 @@ class HTTPTransport {
 
 		const rawData = isFormData ? data : JSON.stringify(data);
 
-		return new Promise((resolve, reject) => {
+		return new Promise<IResponse<T>>((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
 
 			xhr.withCredentials = true;
@@ -103,13 +106,25 @@ class HTTPTransport {
 				xhr.setRequestHeader(name, value);
 			});
 
-			xhr.onload = function () {
-				resolve(JSON.parse(xhr.response));
+			const handleError = () => {
+				// eslint-disable-next-line prefer-promise-reject-errors
+				reject({
+					json: null,
+					status: xhr.status
+				});
 			};
 
-			xhr.onabort = reject;
-			xhr.onerror = reject;
-			xhr.ontimeout = reject;
+			xhr.onload = () => {
+				if (xhr.status !== 200) handleError();
+				resolve({
+					json: parseResult ? JSON.parse(xhr.response) : null,
+					status: xhr.status
+				});
+			};
+
+			xhr.onabort = handleError;
+			xhr.onerror = handleError;
+			xhr.ontimeout = handleError;
 
 			if (method === METHOD.GET || !data) xhr.send();
 			else xhr.send(rawData);

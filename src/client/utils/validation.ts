@@ -57,21 +57,3 @@ export const BaseInputHandlers: InputHandlers = {
 		blockInstance?._eventBus()?.emit('invalid');
 	}
 };
-
-export function handleSubmit(e: Event) {
-	e.preventDefault();
-	const form = (e.target as HTMLFormElement);
-	const isValid = form.checkValidity();
-	if (isValid) {
-		console.log(
-			JSON.stringify(
-				Object.fromEntries(
-					new FormData(e.target as HTMLFormElement)
-				),
-				undefined,
-				2
-			)
-		);
-		form.reset();
-	}
-}

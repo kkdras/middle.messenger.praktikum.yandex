@@ -1,6 +1,12 @@
-import { Connector, ConfigurateStore, Router } from './packages';
+import {
+	Connector,
+	ConfigurateStore,
+	Router,
+	removeItem
+} from './packages';
+import { deepClone } from './utils';
 
-const defaultStore = {
+export const defaultStore = {
 	app: {
 		loader: 0
 	},
@@ -16,7 +22,7 @@ const defaultStore = {
 	}
 };
 
-export const Store = new ConfigurateStore(defaultStore);
+export const Store = new ConfigurateStore(deepClone(defaultStore));
 const connector = new Connector(Store);
 const router = new Router();
 export type StateType = typeof defaultStore;
@@ -26,11 +32,16 @@ setTimeout(() => {
 }, 1000);
 
 export const errorHandler = (e: Error) => {
-	console.error(e);
 	if (process.env.NODE_ENV === 'production') {
-		alert('An error has occurred');
+		const message = e?.message || (e as unknown as IResponse<string>).json || '';
+		// eslint-disable-next-line no-alert
+		alert(`An error has occurred ${message}`);
 		router.go('/externalError');
 	}
+
+	const { status } = e as unknown as IResponse<unknown>;
+	if (status === 401) removeItem('session');
+
 	debugger;
 };
 

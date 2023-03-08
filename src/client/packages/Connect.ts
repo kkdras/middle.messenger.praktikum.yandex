@@ -4,7 +4,7 @@ import Block from './Block';
 import Store, { StoreType } from './Store';
 
 type InferObjectValues<T> = T extends Record<string, infer V>
-	? InferObjectValues<V>
+	? InferObjectValues<V> | V
 	: T;
 
 type Selector<T extends Record<string, unknown>> = (
@@ -38,7 +38,7 @@ class Connector<S extends InstanceType<StoreType>> {
 
 						if (isEqual(mappedStore, newMappedStore)) return;
 						mappedStore = newMappedStore;
-						(this as unknown as Block).setProps({ ...args[0], ...newMappedStore });
+						(this as unknown as Block).setProps({ ...this._meta.props, ...newMappedStore });
 					});
 				}
 			}

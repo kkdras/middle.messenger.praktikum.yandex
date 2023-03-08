@@ -90,7 +90,7 @@ export function handleSubmit(e: Event) {
 			new FormData(e.target as HTMLFormElement)
 		);
 
-		AuthController.SignUp(data as SignUp.body);
+		AuthController.signUp(data as SignUp.body);
 		form.reset();
 	}
 }

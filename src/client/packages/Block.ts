@@ -26,13 +26,14 @@ abstract class Block<T extends PropsType = PropsType> {
 		INIT: 'init',
 		FLOW_CDM: 'flow:component-did-mount',
 		FLOW_CDU: 'flow:component-did-update',
-		FLOW_RENDER: 'flow:render'
+		FLOW_RENDER: 'flow:render',
+		PROPS_UPDATED: 'props-updated'
 	};
 
 	_element: HTMLElement | null = null;
 	_children: Record<string, Block> = {};
 
-	private _meta: {
+	public _meta: {
 		tagName: string;
 		props: null | T;
 		prevProps: null | T;
@@ -145,7 +146,12 @@ abstract class Block<T extends PropsType = PropsType> {
 		eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
 		eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
 		eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
+		eventBus.on(Block.EVENTS.PROPS_UPDATED, this.propsUpdated.bind(this));
 	}
+
+	// use this method to update nested components that depend on props
+	// fires only when store was updated
+	propsUpdated() { }
 
 	// listenOnChildOfTreePosition
 	// default is 0 it mean that events will be listen on
@@ -154,10 +160,8 @@ abstract class Block<T extends PropsType = PropsType> {
 	// for example if component tree is <div><span><a></a></span><input /></div> and
 	// size is 6 element that will be listen is first a tag
 	_addListeners() {
-		const prevEvents = this._meta.prevProps?.events || {};
 		const newEvents = this.props?.events || {};
 
-		const onFirstChildrenPrev = prevEvents.listenOnChildOfTreePosition ?? 0;
 		const onFirstChildrenNow = newEvents.listenOnChildOfTreePosition ?? 0;
 
 		let target = this.getContent();
@@ -175,29 +179,18 @@ abstract class Block<T extends PropsType = PropsType> {
 
 		Object.keys(newEvents).forEach((eventName) => {
 			const newHandler = newEvents[eventName as keyof typeof newEvents];
-			const prevHandler = prevEvents[eventName as keyof typeof prevEvents];
-
-			if (
-				typeof newHandler !== 'function'
-				|| (
-					newHandler === prevHandler
-					&& onFirstChildrenNow === onFirstChildrenPrev
-				)
-			) return;
-
+			if (typeof newHandler !== 'function') return;
 			target?.addEventListener(eventName, newHandler as EventListenerOrEventListenerObject);
 		});
 	}
 
 	_removeListeners() {
 		const prevEvents = this._meta.prevProps?.events || {};
-		const newEvents = this._meta.props?.events || {};
 
 		const onFirstChildrenPrev = prevEvents.listenOnChildOfTreePosition ?? 0;
-		const onFirstChildrenNow = newEvents.listenOnChildOfTreePosition ?? 0;
 
 		let target = this.getContent();
-		let i = onFirstChildrenNow;
+		let i = onFirstChildrenPrev;
 		while(i > 0 && target) {
 			const newElement = target.firstElementChild as HTMLElement;
 			if (newElement) target = newElement;
@@ -206,16 +199,8 @@ abstract class Block<T extends PropsType = PropsType> {
 
 		if (!target) return;
 		Object.keys(prevEvents).forEach((eventName) => {
-			const newHandler = newEvents[eventName as keyof typeof newEvents];
 			const prevHandler = prevEvents[eventName as keyof typeof prevEvents];
-
-			if (eventName === 'listenOnFirstChildren') return;
-
-			if (
-				newHandler === prevHandler
-				&& onFirstChildrenNow === onFirstChildrenPrev
-			) return;
-
+			if (typeof prevHandler !== 'function') return;
 			target?.removeEventListener(eventName, prevHandler as EventListenerOrEventListenerObject);
 		});
 	}
@@ -270,6 +255,7 @@ abstract class Block<T extends PropsType = PropsType> {
 		});
 
 		Object.assign(this.props, nextProps);
+		(this as unknown as Block)._eventBus().emit(Block.EVENTS.PROPS_UPDATED);
 	};
 
 	get element() {
@@ -351,13 +337,16 @@ abstract class Block<T extends PropsType = PropsType> {
 				if (breakCycle) return true;
 
 				target[propertyName as keyof typeof target] = newValue;
-				emitCDU();
+				debounceWrapper();
 				return true;
 			},
 			deleteProperty(target, propertyName) {
 				if (typeof propertyName === 'symbol') throw new Error('props key must be string');
 
-				if (!(propertyName in target)) throw new Error('property that you try to delete does\'t exist in target object');
+				if (!(propertyName in target)) {
+					debugger;
+					throw new Error('property that you try to delete does\'t exist in target object');
+				}
 				const value = target[propertyName];
 
 				if (

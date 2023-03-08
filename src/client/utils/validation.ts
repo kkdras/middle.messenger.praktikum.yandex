@@ -27,9 +27,18 @@ const baseEffect = (e: Event) => {
 export const baseOnFocus = (e: Event) => baseEffect(e);
 export const baseOnBlur = (e: Event) => baseEffect(e);
 
+type ExcludePrefix<T extends string> = string extends T
+	? string
+	: T extends ''
+		? T
+		: T extends `on${infer R}`
+			? R
+			: T
+
 // eventBus назначит сам Block
 export type InputHandlers = {
-	[key in keyof HTMLElementEventMap]?: (this: HTMLInputElement, e: InputEvent)=> void
+	[eventName in keyof GlobalEventHandlers as ExcludePrefix<eventName>]?:
+	GlobalEventHandlers[eventName]
 }
 
 export const BaseInputHandlers: InputHandlers = {

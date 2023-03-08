@@ -7,4 +7,7 @@ export class AuthApi {
 		return fetcher.post<SignUp.success>('/signup', { data: body })
 			.then(({ id }) => id);
 	}
+	getProfileData() {
+		return fetcher.get<IProfileData>('/user');
+	}
 }

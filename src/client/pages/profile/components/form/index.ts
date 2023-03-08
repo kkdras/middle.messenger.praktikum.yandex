@@ -14,53 +14,57 @@ import {
 	requiredError
 } from '../../../../utils/validation';
 import { InputClass, InputPropsType } from '../input';
+import { StateType, withUserData } from '../../../../store';
+import avatarImg from '../../../../public/avatar.jpg';
 
-const fields: InputPropsType[] = [
-	{
+type FieldsKeys = Exclude<keyof StateType['user'], 'avatar' | 'id'>
+
+const fields: Record<FieldsKeys, InputPropsType & { instance?: InputClass }> = {
+	email: {
 		id: 'email',
 		label: 'Почта',
 		pattern: EMAIL_PATTERN,
-		placeholder: 'some text',
+		defaultValue: '',
 		errorMessage: requiredError
 	},
-	{
+	login: {
 		id: 'login',
 		label: 'Логин',
 		pattern: LOGIN_PATTERN,
 		minLength: 3,
 		maxLength: 20,
-		placeholder: 'some text',
+		defaultValue: '',
 		errorMessage: loginError
 	},
-	{
+	first_name: {
 		id: 'first_name',
 		label: 'Имя',
 		pattern: NAME_PATTERN,
-		placeholder: 'some text',
+		defaultValue: '',
 		errorMessage: nameError
 	},
-	{
+	second_name: {
 		id: 'second_name',
 		label: 'Фамилия',
 		pattern: NAME_PATTERN,
-		placeholder: 'some text',
+		defaultValue: '',
 		errorMessage: nameError
 	},
-	{
+	display_name: {
 		id: 'display_name',
 		label: 'Имя в чате',
 		pattern: NAME_PATTERN,
-		placeholder: 'some text',
+		defaultValue: '',
 		errorMessage: nameError
 	},
-	{
+	phone: {
 		id: 'phone',
 		label: 'Телефон',
 		pattern: PHONE_PATTERN,
-		placeholder: 'some text',
+		defaultValue: '',
 		errorMessage: phoneError
 	}
-];
+};
 
 const buttons: ButtonPropsType[] = [
 	{ children: 'Изменить данные', type: 'submit' },
@@ -69,15 +73,47 @@ const buttons: ButtonPropsType[] = [
 ];
 
 type PropsType = {
-	name: string,
-	avatarImg: string,
+	profileData: StateType['user'],
 }
 
 class ProfileForm extends Block {
-	constructor(args: PropsType) {
+	fieldsKeys: FieldsKeys[];
+	constructor({ profileData }: PropsType) {
+		const fieldsKeys = Object.keys(fields).map((key) => {
+			const fieldDefaultProps = fields[key as FieldsKeys];
+			fields[key as FieldsKeys].instance = new InputClass(fieldDefaultProps);
+
+			return key;
+		}) as FieldsKeys[];
+
 		super('div', {
-			fields: fields.map((item) => new InputClass(item)),
+			fields: fieldsKeys.map((item) => fields[item].instance),
 			actions: buttons.map((item) => new Button(item)),
+			events: {
+				submit: handleSubmit
+			},
+			profileData
+		});
+		this.fieldsKeys = fieldsKeys;
+	}
+
+	override propsUpdated() {
+		this.fieldsKeys.forEach((key) => {
+			const fieldData = fields[key];
+			const newValue = (this.props as PropsType).profileData[key as FieldsKeys];
+			const prevProps = fieldData.instance!._meta.props;
+			const nextProps = {
+				...prevProps,
+				defaultValue: newValue
+			};
+
+			fieldData.instance!.setProps(nextProps);
+		});
+	}
+
+	render(): DocumentFragment {
+		return Block.compile(tmp, {
+			...this.props,
 			class: {
 				profile: style.profile,
 				profileBody: style.profile__body,
@@ -86,16 +122,11 @@ class ProfileForm extends Block {
 				profileName: style.profile__headerName,
 				profileData: style.profile__data
 			},
-			events: {
-				submit: handleSubmit
-			},
-			...args
+			avatarImg: (this.props as StateType['user']).avatar || avatarImg
 		});
-	}
-
-	render(): DocumentFragment {
-		return Block.compile(tmp, this.props);
 	}
 };
 
-export default ProfileForm;
+const ConnectedProfileForm = withUserData(ProfileForm);
+
+export default ConnectedProfileForm;

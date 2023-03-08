@@ -1,13 +1,13 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as styles from './style.module.scss';
 import arrowImg from '../../public/arrow.png';
-import avatarImg from '../../public/avatar.jpg';
-// import {
-// 	handleSubmit
-// } from '../../utils/validation';
+import {
+	handleSubmit
+} from '../../utils/validation';
 import { Block } from '../../packages';
 import { Form } from './components';
 import { Loader } from '../../ui';
+import { AuthController } from '../../controllers';
 
 type PropsType = {
 	href: string,
@@ -24,9 +24,15 @@ class ProfilePage extends Block {
 				leftBar: styles.leftBar,
 				profile: styles.profile
 			},
-			events: {},
+			events: {
+				submit: handleSubmit
+			},
 			...args
 		});
+	}
+
+	override componentDidMount() {
+		AuthController.LoadProfile();
 	}
 
 	render(): DocumentFragment {
@@ -37,9 +43,6 @@ class ProfilePage extends Block {
 export default () => new ProfilePage({
 	href: '/',
 	leftBarImg: arrowImg,
-	form: new Form({
-		avatarImg,
-		name: 'Константин'
-	}),
+	form: new Form({}),
 	loader: new Loader({})
 });

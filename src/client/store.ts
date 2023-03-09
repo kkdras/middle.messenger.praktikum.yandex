@@ -8,7 +8,8 @@ import { deepClone } from './utils';
 
 export const defaultStore = {
 	app: {
-		loader: 0
+		loader: 0,
+		passwordMode: false
 	},
 	user: {
 		id: 0,
@@ -50,3 +51,8 @@ export const withLoader = connector.connect(loaderSelector);
 
 export const userDataSelector = (store: StateType) => ({ profileData: store.user });
 export const withUserData = connector.connect(userDataSelector);
+
+export const passwordModeSelector = (store: StateType) => ({
+	passwordMode: store.app.passwordMode
+});
+export const withPasswordMode = connector.connect(passwordModeSelector);

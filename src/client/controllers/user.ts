@@ -1,10 +1,8 @@
 import { checkValidNewPassword, checkValidAvatar, checkValidNewProfile } from './utils';
 import { errorHandler, Store } from '../store';
 import { UserApi } from '../api';
-import { Router } from '../packages';
 
 const userApi = new UserApi();
-const router = new Router();
 
 class UserControllerClass {
 	public async updateProfileData(data: IBaseProfileData) {
@@ -17,8 +15,8 @@ class UserControllerClass {
 			Store.setState('app.loader', Store.getState().app.loader - 1);
 
 		} catch (e) {
+			Store.setState('app.loader', Store.getState().app.loader - 1);
 			errorHandler(e as Error);
-			router.go('/login');
 		}
 	}
 
@@ -31,8 +29,8 @@ class UserControllerClass {
 			Store.setState('app.loader', Store.getState().app.loader - 1);
 
 		} catch (e) {
+			Store.setState('app.loader', Store.getState().app.loader - 1);
 			errorHandler(e as Error);
-			router.go('/login');
 		}
 	}
 
@@ -40,14 +38,15 @@ class UserControllerClass {
 		try {
 			Store.setState('app.loader', Store.getState().app.loader + 1);
 			checkValidAvatar(data);
+
 			const newAvatar = await userApi.changeAvatar(data);
 
 			Store.setState('user.avatar', newAvatar);
-			Store.setState('app.loader', Store.getState().app.loader - 1);
 
+			Store.setState('app.loader', Store.getState().app.loader - 1);
 		} catch (e) {
+			Store.setState('app.loader', Store.getState().app.loader - 1);
 			errorHandler(e as Error);
-			router.go('/login');
 		}
 	}
 }

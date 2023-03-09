@@ -67,15 +67,13 @@ export class InputClass extends Block {
 	}
 
 	componentDidMount(): void {
-		const target = this._children['children' as keyof typeof this._children];
-
-		target._eventBus().on('invalid', () => {
+		this.input._eventBus().on('invalid', () => {
 			const container = this.getContent()?.firstElementChild;
 			if (!container) return;
 			container.classList.add('invalid');
 		});
 
-		target._eventBus().on('valid', () => {
+		this.input._eventBus().on('valid', () => {
 			const container = this.getContent()?.firstElementChild;
 			if (!container) return;
 			container.classList.remove('invalid');

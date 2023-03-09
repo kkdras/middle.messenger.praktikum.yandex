@@ -12,6 +12,6 @@ export class UserApi {
 			.then(({ json: { avatar } }) => avatar);
 	}
 	changePassword(body: IPasswordBody) {
-		return fetcher.get<IProfileData>('/password', { data: body });
+		return fetcher.put<IProfileData>('/password', { data: body, parseResult: false });
 	}
 }

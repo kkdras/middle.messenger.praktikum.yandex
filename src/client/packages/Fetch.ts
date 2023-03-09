@@ -87,7 +87,7 @@ class HTTPTransport {
 
 		// eslint-disable-next-line curly
 		if (isFormData) {
-			headers['Content-type'] = 'multipart/form-data';
+			delete headers['Content-type'];
 		}
 
 		const rawData = isFormData ? data : JSON.stringify(data);

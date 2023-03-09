@@ -266,6 +266,7 @@ abstract class Block<T extends PropsType = PropsType> {
 
 	_render() {
 		const block = this.render();
+		this._writeChildren();
 
 		this._removeListeners();
 		this._mountChildren(block as any);
@@ -332,9 +333,9 @@ abstract class Block<T extends PropsType = PropsType> {
 				if (typeof propertyName === 'symbol') throw new Error('props key must be string');
 
 				// if return true it's meaning that children are equal
-				const breakCycle = self._manageUpdateChildren(propertyName, target, newValue);
+				// const breakCycle = self._manageUpdateChildren(propertyName, target, newValue);
 
-				if (breakCycle) return true;
+				// if (breakCycle) return true;
 
 				target[propertyName as keyof typeof target] = newValue;
 				debounceWrapper();

@@ -78,6 +78,7 @@ class ChatsControllerClass {
 
 		const chatUsers = await chatApi.getChatUsers(id);
 		Store.setState('chats.currentChat.users', chatUsers);
+		removeLoader()
 		return chatUsers;
 	}
 
@@ -87,6 +88,7 @@ class ChatsControllerClass {
 		const { token } = await chatApi.createChatToken(id);
 
 		Store.setState('chats.currentChat.token', token);
+		removeLoader()
 		return token;
 	}
 
@@ -110,7 +112,7 @@ class ChatsControllerClass {
 			addLoader();
 
 			//! create token
-			const tokenPromise = this.createChatToken(chatId).finally(() =>
+			const tokenPromise = this.createChatToken(chatId).catch(() =>
 				removeLoader()
 			);
 
@@ -118,7 +120,7 @@ class ChatsControllerClass {
 			// if it wont possible to load users, then it'll simply
 			// not be possible to remove someone from the chat, but it
 			// wont interfere to work with chat :)
-			const usersPromise = this.getChatUsers(chatId).finally(() =>
+			const usersPromise = this.getChatUsers(chatId).catch(() =>
 				removeLoader()
 			);
 
@@ -134,7 +136,7 @@ class ChatsControllerClass {
 			);
 			this.ws.openConnection();
 
-		Store.setState('chats.currentChat.id', chatId);
+			Store.setState('chats.currentChat.id', chatId);
 			Store.setState('chats.showChat', true);
 			removeLoader();
 		} catch (e) {

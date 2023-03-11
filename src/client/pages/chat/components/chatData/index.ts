@@ -1,5 +1,5 @@
 import tmp from 'bundle-text:./index.hbs';
-import { Store, withChatUsers } from '../../../../store';
+import { Store, withChatUsersAndChatId } from '../../../../store';
 import { Block } from '../../../../packages';
 import * as styles from './style.module.scss';
 import { Button } from '../../../../ui';
@@ -7,6 +7,7 @@ import { createBanner } from './utils';
 
 type PropsType = {
 	chatUsers: IProfileData[];
+	chatId: number;
 };
 
 class _ChatData extends Block {
@@ -51,4 +52,4 @@ class _ChatData extends Block {
 	}
 }
 
-export const ChatData = withChatUsers(_ChatData);
+export const ChatData = withChatUsersAndChatId(_ChatData);

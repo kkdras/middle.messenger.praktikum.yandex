@@ -59,6 +59,12 @@ class ChatsControllerClass {
 			await chatApi.deleteUser(data);
 			await this.getChatUsers(data.chatId);
 
+			const authUser = Store.getState().user.id;
+			if (data.users.some((userId) => userId === authUser)) {
+				this.closeChat();
+				this.getChats();
+			}
+
 			removeLoader();
 		} catch (e) {
 			removeLoader();
@@ -88,9 +94,11 @@ class ChatsControllerClass {
 	}
 
 	public closeChat() {
+		Store.setState('chats.currentChat.id', 0);
 		Store.setState('chats.currentChat.users', []);
 		Store.setState('chats.currentChat.token', '');
 		Store.setState('chats.currentChat.messages', []);
+		Store.setState('chats.showChat', false);
 		this.ws?.closeConnection();
 		this.ws = null;
 	}
@@ -105,22 +113,21 @@ class ChatsControllerClass {
 			addLoader();
 
 			//! create token
-			const tokenPromise = this.createChatToken(chatId)
-				.finally(() => removeLoader());
+			const tokenPromise = this.createChatToken(chatId).finally(() =>
+				removeLoader()
+			);
 
 			//! get chat users
 			// if it wont possible to load users, then it'll simply
 			// not be possible to remove someone from the chat, but it
 			// wont interfere to work with chat :)
-			const usersPromise = this.getChatUsers(chatId)
-				.finally(() => removeLoader());
+			const usersPromise = this.getChatUsers(chatId).finally(() =>
+				removeLoader()
+			);
 
 			const [tokenRes] = await Promise.allSettled([tokenPromise, usersPromise]);
 			if (tokenRes.status === 'rejected') {
-				assertsAllSettledPromise(
-					tokenRes,
-					'fail generating chat token'
-				);
+				assertsAllSettledPromise(tokenRes, 'fail generating chat token');
 			}
 			const token = tokenRes.value;
 
@@ -130,7 +137,7 @@ class ChatsControllerClass {
 			);
 			this.ws.openConnection();
 
-			Store.setState('chats.currentChat.id', chatId);
+		Store.setState('chats.currentChat.id', chatId);
 			Store.setState('chats.showChat', true);
 			removeLoader();
 		} catch (e) {

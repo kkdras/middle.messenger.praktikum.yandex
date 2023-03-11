@@ -2,7 +2,7 @@ import tmp from 'bundle-text:./index.hbs';
 import { debounceInvokeFunction } from '../../utils/functions';
 import * as style from './style.module.scss';
 import { Block, RouterLink } from '../../packages';
-import { Button, TextField } from '../../ui';
+import { Button, Loader, TextField } from '../../ui';
 import {
 	handleCreateNewChat,
 	handleLoadChat,
@@ -19,6 +19,7 @@ type PropsType = {
 	showNewChatPopUp: boolean;
 	chats: IChat[];
 	showChat: boolean;
+	loader: Block;
 };
 
 class ChatPage extends Block {
@@ -154,5 +155,6 @@ const ConnectedChatPage = withChatPageData(ChatPage);
 export default () =>
 	new ConnectedChatPage({
 		submitButton,
-		input
+		input,
+		loader: new Loader({})
 	});

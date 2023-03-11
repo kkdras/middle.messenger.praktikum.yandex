@@ -78,8 +78,6 @@ class ChatsControllerClass {
 
 		const chatUsers = await chatApi.getChatUsers(id);
 		Store.setState('chats.currentChat.users', chatUsers);
-
-		removeLoader();
 		return chatUsers;
 	}
 
@@ -89,7 +87,6 @@ class ChatsControllerClass {
 		const { token } = await chatApi.createChatToken(id);
 
 		Store.setState('chats.currentChat.token', token);
-		removeLoader();
 		return token;
 	}
 

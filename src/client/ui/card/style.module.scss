@@ -32,3 +32,18 @@
 		justify-content: center;
 	}
 }
+
+.blackout .card {
+	&__wrapper {
+		background-color: rgba(128, 128, 128, 0.771);
+		pointer-events: none;
+	}
+
+	&__body {
+		pointer-events: all;
+	}
+}
+
+.hidden {
+	display: none
+}

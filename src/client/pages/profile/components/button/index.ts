@@ -1,13 +1,13 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
 import { classNames } from '../../../../utils';
-import { Block } from '../../../../packages';
+import { Block, BlockEvents } from '../../../../packages';
 
 export type ButtonPropsType = {
 	children: string | Block,
 	type?: HTMLButtonElement['type'],
 	classes?: string[],
-	events?: Record<string, (...args: any[])=> void>
+	events?: BlockEvents
 }
 
 export class Button extends Block {

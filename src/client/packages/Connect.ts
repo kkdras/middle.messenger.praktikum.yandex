@@ -37,7 +37,8 @@ class Connector<S extends InstanceType<StoreType>> {
 						const newMappedStore = selector(store.getState() as S['_state']);
 						if (isEqual(mappedStore, newMappedStore)) return;
 						mappedStore = newMappedStore;
-						(this as unknown as Block).setProps({ ...this._meta.props, ...newMappedStore });
+						this.setProps({ ...this._meta.props, ...newMappedStore });
+						this.storePropsUpdated();
 					});
 				}
 			}

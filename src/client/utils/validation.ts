@@ -21,6 +21,9 @@ export const passwordError = 'От 8 до 40 символов, хотя бы о�
 export const phoneError = 'От 10 до 15 символов, цыфры, может начинается с плюса.';
 
 export const requiredError = 'Это поле обязательно к заполнению';
+
+export const chatNameError = 'Поле обязательно, от 4 до 40 символов';
+
 const baseEffect = (e: Event) => {
 	(e.target as HTMLInputElement).checkValidity();
 };
@@ -56,4 +59,21 @@ export const BaseInputHandlers: InputHandlers = {
 		const blockInstance = ((e.target as any).__BlockInstance || null) as Block | null;
 		blockInstance?._eventBus()?.emit('invalid');
 	}
+};
+
+// по другому просто никак
+// используя event так сделать не получится
+// handle on click outside
+export const useClickOutside = (container: Element, callback: ()=> void) => {
+	const listener = (e: MouseEvent) => {
+		const target = e.target as HTMLElement;
+		if (container.contains(target)) return;
+		callback();
+	};
+
+	document.addEventListener('click', listener);
+
+	return () => {
+		document.removeEventListener('click', listener);
+	};
 };

@@ -12,3 +12,8 @@ declare interface IProfileData extends IBaseProfileData {
 	id: number;
 	avatar: string | null;
 }
+
+declare interface ISearchUserBody {
+	[index: string]
+	login: string
+}

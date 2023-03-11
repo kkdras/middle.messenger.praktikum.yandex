@@ -12,11 +12,13 @@ type ExcludePrefix<T extends string> = string extends T
 			? R
 			: T
 
+export type BlockEvents = {
+	[eventName in keyof GlobalEventHandlers as ExcludePrefix<eventName>]?:
+	GlobalEventHandlers[eventName]
+}
+
 type PropsType = Record<string, unknown> & {
-	events?: {
-		[eventName in keyof GlobalEventHandlers as ExcludePrefix<eventName>]?:
-		GlobalEventHandlers[eventName]
-	} & {
+	events?: BlockEvents & {
 		['listenOnChildOfTreePosition']?: number,
 	}
 }
@@ -150,8 +152,20 @@ abstract class Block<T extends PropsType = PropsType> {
 	}
 
 	// use this method to update nested components that depend on props
-	// fires only when store was updated
 	propsUpdated() { }
+
+	// fires only when store was updated
+	// use this method to update current component props
+	storePropsUpdated() { }
+
+	componentWillUnmount() { }
+
+	dispatchComponentWillUnmount() {
+		this.componentWillUnmount();
+		Object.values(this._children).forEach((component) => {
+			component.dispatchComponentWillUnmount();
+		});
+	}
 
 	// listenOnChildOfTreePosition
 	// default is 0 it mean that events will be listen on
@@ -225,8 +239,8 @@ abstract class Block<T extends PropsType = PropsType> {
 	// eslint-disable-next-line class-methods-use-this
 	componentDidMount() {}
 
-	dispatchComponentDidMount() {
-		this._eventBus().emit(Block.EVENTS.FLOW_CDM);
+	dispatchComponentDidMount(useForCurrent: boolean = true) {
+		if(useForCurrent) this._eventBus().emit(Block.EVENTS.FLOW_CDM);
 		Object.values(this._children).forEach((el) => {
 			el.dispatchComponentDidMount();
 		});
@@ -256,6 +270,7 @@ abstract class Block<T extends PropsType = PropsType> {
 
 		Object.assign(this.props, nextProps);
 		(this as unknown as Block)._eventBus().emit(Block.EVENTS.PROPS_UPDATED);
+		this._writeChildren();
 	};
 
 	get element() {
@@ -266,7 +281,6 @@ abstract class Block<T extends PropsType = PropsType> {
 
 	_render() {
 		const block = this.render();
-		this._writeChildren();
 
 		this._removeListeners();
 		this._mountChildren(block as any);
@@ -285,22 +299,14 @@ abstract class Block<T extends PropsType = PropsType> {
 		return this.element;
 	}
 
-	_manageUpdateChildren<S>(name: keyof S, target: S, newValue: unknown): boolean {
+	_manageUpdateChildren<S>(name: keyof S, target: S, newValue: unknown): void {
 		const oldValue = target[name] as unknown;
 		if (
 			oldValue
 			&& typeof oldValue === 'object'
 			&& oldValue instanceof Block
-		) if (oldValue === newValue) return true;
-
-		// here we can dispatch on nested node component will unmout
-
-		if (
-			typeof newValue === 'object'
-			&& newValue instanceof Block
-		) this._children[name as string] = newValue;
-
-		return false;
+			&& oldValue !== newValue
+		) this.dispatchComponentWillUnmount();
 	}
 
 	_makePropsProxy(userProps: T) {
@@ -332,10 +338,7 @@ abstract class Block<T extends PropsType = PropsType> {
 			set(target, propertyName, newValue) {
 				if (typeof propertyName === 'symbol') throw new Error('props key must be string');
 
-				// if return true it's meaning that children are equal
-				// const breakCycle = self._manageUpdateChildren(propertyName, target, newValue);
-
-				// if (breakCycle) return true;
+				self._manageUpdateChildren(propertyName, target, newValue);
 
 				target[propertyName as keyof typeof target] = newValue;
 				debounceWrapper();
@@ -345,11 +348,11 @@ abstract class Block<T extends PropsType = PropsType> {
 				if (typeof propertyName === 'symbol') throw new Error('props key must be string');
 
 				if (!(propertyName in target)) {
-					debugger;
 					throw new Error('property that you try to delete does\'t exist in target object');
 				}
 				const value = target[propertyName];
 
+				self._manageUpdateChildren(propertyName, target, undefined);
 				if (
 					typeof value === 'object'
 					&& value instanceof Block
@@ -379,7 +382,7 @@ abstract class Block<T extends PropsType = PropsType> {
 	hide() {
 		const el = this.getContent();
 		if (el) el.style.display = 'none';
-
+		this.dispatchComponentWillUnmount();
 	}
 
 	toString() {

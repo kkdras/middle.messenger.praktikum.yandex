@@ -31,7 +31,7 @@
 		"linebreak-style": 0,
 		"indent": ["error", "tab", { "SwitchCase": 1 }],
 		"space-after-keywords": 0,
-		"curly": ["error", "multi-or-nest"],
+		"curly": 0,
 		"@typescript-eslint/restrict-template-expressions" : 0,
 		"semi": ["error", "always"],
 		"@typescript-eslint/keyword-spacing": 0,
@@ -51,6 +51,8 @@
 		"dot-notation:": 0,
 		"no-extra-semi:": 0,
 		"class-methods-use-this": 0,
-		"import/prefer-default-export": 0
+		"import/prefer-default-export": 0,
+		"implicit-arrow-linebreak": 0,
+		"no-plusplus": 0
 	}
 }

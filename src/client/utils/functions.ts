@@ -87,3 +87,5 @@ export const debounceInvokeFunction = (callback: ()=> void, delay = 0) => {
 export const limitDeepCopy = (value: unknown): boolean => !(!!value
 	&& typeof value === 'object'
 	&& value instanceof Block);
+
+export const noop = () => 0;

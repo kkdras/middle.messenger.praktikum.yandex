@@ -11,7 +11,8 @@
     "build:client": "parcel build --target client --no-cache",
     "build:server": "parcel build --target server --no-cache",
     "test": "node --test",
-    "clean": "rm -r .parcel-cache build"
+    "clean": "rm -r .parcel-cache build",
+		"cleanDev": "npm run clean & npm run dev"
   },
   "engines": {
     "node": "18.13.0"

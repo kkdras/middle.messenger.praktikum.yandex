@@ -3,6 +3,10 @@
 .userBanner {
 	padding: 10px;
 	display: flex;
+	transition: all 0.3s ease 0s;
+	&:hover {
+		background-color: rgb(189, 187, 187);
+	}
 
 	&__avatar {
 		border-radius: 50%;
@@ -41,7 +45,12 @@
 	}
 
 	&__messageTime {
-		font-size: 12spx;
+		font-size: 12px;
+		color: var(--second-color from global);
+	}
+
+	&__counter {
+		font-size: 12px;
 		color: var(--second-color from global);
 	}
 }

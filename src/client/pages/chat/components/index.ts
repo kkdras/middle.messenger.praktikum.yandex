@@ -1,2 +1,2 @@
-/* eslint-disable import/prefer-default-export */
-export { UserBanner } from './userBanner/index';
+export { default as newChatPopUp } from './newChatPopUp';
+export * from './infoBanner';

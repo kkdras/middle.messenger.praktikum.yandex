@@ -1,3 +1,5 @@
+import { Store } from '../store';
+
 export const checkValidSignUpData = (data: object) => {
 	const valid = (
 		'first_name' in data
@@ -47,3 +49,29 @@ export const checkValidSignInData = (data: object) => {
 
 	if (!valid) throw new Error('auth data is incorrect');
 };
+
+export const addLoader = () => {
+	Store.setState('app.loader', Store.getState().app.loader + 1);
+};
+
+export const removeLoader = () => {
+	Store.setState('app.loader', Store.getState().app.loader - 1);
+};
+
+export const throwError = (message: string): never => {
+	throw new Error(message);
+};
+
+export function assertsAllSettledPromise<T>(
+	promise: PromiseSettledResult<T>,
+	altMessage: string
+): asserts promise is PromiseFulfilledResult<T> {
+	if (promise.status === 'rejected') {
+		const reason = promise.reason as unknown;
+		if (reason && typeof reason === 'object' && reason instanceof Error) {
+			throw reason;
+		}
+
+		throwError(typeof reason === 'string' ? reason : altMessage);
+	}
+}

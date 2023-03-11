@@ -49,6 +49,21 @@ class UserControllerClass {
 			errorHandler(e as Error);
 		}
 	}
+
+	public async searchUser(data: ISearchUserBody) {
+		try {
+			Store.setState('app.loader', Store.getState().app.loader + 1);
+
+			const searchResult = await userApi.searchUser(data);
+
+			Store.setState('usersSearch', searchResult);
+
+			Store.setState('app.loader', Store.getState().app.loader - 1);
+		} catch (e) {
+			Store.setState('app.loader', Store.getState().app.loader - 1);
+			errorHandler(e as Error);
+		}
+	}
 }
 
 export const UserController = new UserControllerClass();

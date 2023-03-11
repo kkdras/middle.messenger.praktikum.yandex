@@ -12,7 +12,8 @@
     "build:server": "parcel build --target server --no-cache",
     "test": "node --test",
     "clean": "rm -r .parcel-cache build",
-		"cleanDev": "npm run clean & npm run dev"
+		"cleanDev": "npm run clean & npm run dev",
+		"typeCheck": "tsc --pretty --noEmit"
   },
   "engines": {
     "node": "18.13.0"

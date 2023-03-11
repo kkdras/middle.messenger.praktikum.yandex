@@ -72,7 +72,7 @@ class ChatPage extends Block {
 			buttonNewChat,
 			newChatPopUp: props.showNewChatPopUp ? popUpNewChat : null,
 			listChats,
-			chatData: chatData,
+			chatData,
 			...props
 		});
 		this.newChatPopUp = popUpNewChat;
@@ -106,7 +106,7 @@ class ChatPage extends Block {
 		this.listChats.forEach((item) => item.dispatchComponentWillUnmount());
 		newProps = { ...newProps, listChats: newListChats };
 
-		const showChat = newProps.showChat;
+		const { showChat } = newProps;
 		if (showChat && this.chatData === null) {
 			this.chatData = new ChatData({});
 		}

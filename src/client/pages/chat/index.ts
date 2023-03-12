@@ -9,7 +9,9 @@ import {
 	transformChatProps
 } from './utils';
 import { withChatPageData } from '../../store';
-import { newChatPopUp, InfoBanner, Dialog } from './components';
+import {
+	newChatPopUp, InfoBanner, Dialog
+} from './components';
 import { AuthController, ChatsController } from '../../controllers';
 import { ChatData } from './components/chatData';
 
@@ -26,6 +28,7 @@ class ChatPage extends Block {
 	newChatPopUp: Block;
 	listChats: Block[];
 	chatData: Block | null;
+
 	constructor(props: PropsType) {
 		const link = new RouterLink({
 			children: 'Профиль >',
@@ -87,6 +90,7 @@ class ChatPage extends Block {
 			newChatPopUp: Block | null;
 			listChats: Block[];
 			chatData: Block | string;
+			addUserPopUp: Block | null;
 		} & PropsType;
 		if (!newProps.newChatPopUp && newProps.showNewChatPopUp === true) {
 			newProps = { ...newProps, newChatPopUp: this.newChatPopUp };

@@ -82,7 +82,8 @@ export const withChatUsers = connector.connect(chatUsersSelector);
 
 export const chatUsersAndChatIdSelector = (store: StateType) => ({
 	chatUsers: store.chats.currentChat.users,
-	chatId: store.chats.currentChat.id
+	chatId: store.chats.currentChat.id,
+	showAddUserPopUp: store.app.showAddUserPopUp
 });
 export const withChatUsersAndChatId = connector.connect(
 	chatUsersAndChatIdSelector
@@ -96,3 +97,9 @@ export const dialogSelector = (store: StateType) => ({
 export const withDialogProps = connector.connect(
 	dialogSelector
 );
+
+export const addUserPopUpSelector = (store: StateType) => ({
+	searchList: store.chats.searchUsers,
+	chatId: store.chats.currentChat.id
+});
+export const withAddUserPopUpProps = connector.connect(addUserPopUpSelector);

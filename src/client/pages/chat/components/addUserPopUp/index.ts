@@ -9,14 +9,14 @@ import {
 	TextField,
 	TextFieldProps
 } from '../../../../ui';
-import { handleCreateNewChat } from './utils';
-import { Store } from '../../../../store';
+import { handleSearch, createBanner } from './utils';
+import { Store, withAddUserPopUpProps } from '../../../../store';
 
 const fields: TextFieldProps[] = [
 	{
-		id: 'title',
-		label: 'Название чата',
-		type: 'text',
+		id: 'login',
+		label: 'Найти пользователя используя логин',
+		type: 'login',
 		minLength: 4,
 		maxLength: 40,
 		errorMessage: chatNameError
@@ -24,33 +24,43 @@ const fields: TextFieldProps[] = [
 ];
 
 const buttons: ButtonPropsType[] = [
-	{ children: 'Создать чат', classes: style.form__logInButton, type: 'submit' }
+	{ children: 'Найти', classes: style.form__logInButton, type: 'submit' }
 ];
 
-class NewChatPopUp extends Block {
+type PropsType = {
+	searchList: IProfileData[],
+	chatId: number;
+}
+
+class _AddUserPopUp extends Block {
 	isFirstRender: boolean;
 	removeListeners: (()=> void)[] = [];
 
-	constructor() {
+	constructor(props: PropsType) {
+		const searchList = props.searchList.map(createBanner.bind(null, props.chatId));
+
 		super('div', {
 			class: {
 				form: style.form,
-				formTitle: style.form__title
+				formTitle: style.form__title,
+				searchResults: style.searchResults
 			},
 			events: {
-				submit: handleCreateNewChat,
+				submit: handleSearch,
 				listenOnChildOfTreePosition: 1
 			},
 			children: [
 				...fields.map((item) => new TextField(item)),
 				...buttons.map((item) => new Button(item))
-			]
+			],
+			searchResults: searchList.length ? searchList : 'Пользователей не найдено',
+			...props
 		});
 		this.isFirstRender = true;
 	}
 
 	handleClickOutside() {
-		Store.setState('app.showNewChatPopUp', false);
+		Store.setState('app.showAddUserPopUp', false);
 	}
 
 	override componentDidMount() {
@@ -65,12 +75,26 @@ class NewChatPopUp extends Block {
 		this.removeListeners = [];
 	}
 
+	override storePropsUpdated() {
+		const currentProps = this._meta.props as PropsType;
+		const searchList = currentProps.searchList.map(
+			createBanner.bind(null, currentProps.chatId)
+		);
+
+		this.setProps({
+			...currentProps,
+			searchResults: searchList.length ? searchList : 'Пользователей не найдено'
+		});
+	}
+
 	render(): DocumentFragment {
 		return Block.compile(tmp, this.props);
 	}
 }
 
+const AddUserPopUp = withAddUserPopUpProps(_AddUserPopUp);
+
 export default () => new Card({
-	children: new NewChatPopUp(),
+	children: new AddUserPopUp({}),
 	blackout: true
 });

@@ -54,7 +54,9 @@ class ChatsControllerClass {
 		try {
 			addLoader();
 			await chatApi.addUser(data);
-			await this.getChatUsers(data.chatId);
+			const promise = this.getChatUsers(data.chatId);
+			promise.catch(() => removeLoader());
+			await promise;
 
 			removeLoader();
 		} catch (e) {
@@ -67,7 +69,9 @@ class ChatsControllerClass {
 		try {
 			addLoader();
 			await chatApi.deleteUser(data);
-			await this.getChatUsers(data.chatId);
+			const promise = this.getChatUsers(data.chatId);
+			promise.catch(() => removeLoader());
+			await promise;
 
 			const authUser = Store.getState().user.id;
 			if (data.users.some((userId) => userId === authUser)) {

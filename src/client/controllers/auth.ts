@@ -2,7 +2,9 @@ import { setItem } from '../packages/Storage';
 import { defaultStore, errorHandler, Store } from '../store';
 import { AuthApi } from '../api';
 import { Router } from '../packages';
-import { checkValidSignUpData, checkValidSignInData } from './utils';
+import {
+	checkValidSignUpData, checkValidSignInData, addLoader, removeLoader
+} from './utils';
 
 const authAPI = new AuthApi();
 const router = new Router();
@@ -10,29 +12,29 @@ const router = new Router();
 class AuthControllerClass {
 	public async signUp(data: SignUp.body) {
 		try {
-			Store.setState('app.loader', Store.getState().app.loader + 1);
+			addLoader();
 			checkValidSignUpData(data);
 			const userId = await authAPI.signUp(data);
 
 			setItem('session', String(1));
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			Store.setState('user.id', userId);
 			router.go('/profile');
 		} catch (e) {
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			errorHandler(e as Error);
 		}
 	}
 
 	public async getProfile() {
 		try {
-			Store.setState('app.loader', Store.getState().app.loader + 1);
+			addLoader();
 			const userData = await authAPI.getProfile();
 			Store.setState('user', userData);
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 
 		} catch (e) {
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			errorHandler(e as Error);
 			router.go('/login');
 		}
@@ -40,16 +42,16 @@ class AuthControllerClass {
 
 	public async signIn(data: SignIn.body) {
 		try {
-			Store.setState('app.loader', Store.getState().app.loader + 1);
+			addLoader();
 			checkValidSignInData(data);
 			await authAPI.signIn(data);
 
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			setItem('session', String(1));
 
 			router.go('/profile');
 		} catch (e) {
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			errorHandler(e as Error);
 			router.go('/login');
 		}
@@ -57,15 +59,15 @@ class AuthControllerClass {
 
 	public async logout() {
 		try {
-			Store.setState('app.loader', Store.getState().app.loader + 1);
+			addLoader();
 			await authAPI.logout();
 
 			Store.setState('user', defaultStore.user);
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 
 			router.go('/login');
 		} catch (e) {
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			errorHandler(e as Error);
 		}
 	}

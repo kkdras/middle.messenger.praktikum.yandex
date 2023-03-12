@@ -15,6 +15,7 @@ export class UserApi {
 		return fetcher.put<IProfileData>('/password', { data: body, parseResult: false });
 	}
 	searchUser(body: ISearchUserBody) {
-		return fetcher.post<IProfileData[]>('/user/search', { data: body });
+		return fetcher.post<IProfileData[]>('/search', { data: body })
+			.then(({ json }) => json);
 	}
 }

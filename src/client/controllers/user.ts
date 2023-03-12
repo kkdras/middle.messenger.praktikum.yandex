@@ -1,4 +1,6 @@
-import { checkValidNewPassword, checkValidAvatar, checkValidNewProfile } from './utils';
+import {
+	checkValidNewPassword, checkValidAvatar, checkValidNewProfile, removeLoader, addLoader
+} from './utils';
 import { errorHandler, Store } from '../store';
 import { UserApi } from '../api';
 
@@ -7,60 +9,60 @@ const userApi = new UserApi();
 class UserControllerClass {
 	public async updateProfileData(data: IBaseProfileData) {
 		try {
-			Store.setState('app.loader', Store.getState().app.loader + 1);
+			addLoader();
 			checkValidNewProfile(data);
 			const userData = await userApi.changeProfile(data);
 
 			Store.setState('user', userData);
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 
 		} catch (e) {
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			errorHandler(e as Error);
 		}
 	}
 
 	public async changePassword(data: IPasswordBody) {
 		try {
-			Store.setState('app.loader', Store.getState().app.loader + 1);
+			addLoader();
 			checkValidNewPassword(data);
 			await userApi.changePassword(data);
 
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 
 		} catch (e) {
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			errorHandler(e as Error);
 		}
 	}
 
 	public async changeAvatar(data: FormData) {
 		try {
-			Store.setState('app.loader', Store.getState().app.loader + 1);
+			addLoader();
 			checkValidAvatar(data);
 
 			const newAvatar = await userApi.changeAvatar(data);
 
 			Store.setState('user.avatar', newAvatar);
 
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 		} catch (e) {
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			errorHandler(e as Error);
 		}
 	}
 
 	public async searchUser(data: ISearchUserBody) {
 		try {
-			Store.setState('app.loader', Store.getState().app.loader + 1);
+			addLoader();
 
 			const searchResult = await userApi.searchUser(data);
 
-			Store.setState('usersSearch', searchResult);
+			Store.setState('chats.searchUsers', searchResult);
 
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 		} catch (e) {
-			Store.setState('app.loader', Store.getState().app.loader - 1);
+			removeLoader();
 			errorHandler(e as Error);
 		}
 	}

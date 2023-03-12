@@ -3,23 +3,32 @@ import { Store, withChatUsersAndChatId } from '../../../../store';
 import { Block } from '../../../../packages';
 import * as styles from './style.module.scss';
 import { Button } from '../../../../ui';
-import { createBanner } from './utils';
+import { createBanner, handleAddUser } from './utils';
+import { addUserPupUp } from '..';
+import { debounceInvokeFunction } from '../../../../utils';
 
 type PropsType = {
 	chatUsers: IProfileData[];
 	chatId: number;
 	chatForm: Block;
+	showAddUserPopUp: boolean;
 };
 
 class _ChatData extends Block {
-	newButton: Block;
 	usersList: Block[];
+	addUserPopUp: Block;
 	constructor(props: PropsType) {
-		const newButton = new Button({ children: 'Добавить пользователя' });
+		const newButton = new Button({
+			children: 'Добавить пользователя',
+			events: {
+				click: handleAddUser
+			}
+		});
 
 		const chatId = Store.getState().chats.currentChat.id;
 
 		const usersList = props.chatUsers.map((user) => createBanner(user, chatId));
+		const popUpAddUser = addUserPupUp();
 
 		super('div', {
 			class: {
@@ -32,20 +41,33 @@ class _ChatData extends Block {
 			},
 			newButton,
 			usersList,
+			addUserPopUp: props.showAddUserPopUp ? popUpAddUser : null,
 			...(props as Record<string, unknown>)
 		});
 		this.usersList = usersList;
-		this.newButton = newButton;
+		this.addUserPopUp = popUpAddUser;
 	}
 
 	override storePropsUpdated() {
-		const currentProps = this._meta.props as PropsType;
+		let newProps = this._meta.props as PropsType & {
+			usersList: Block[];
+			addUserPopUp: Block | null;
+		};
 		const chatId = Store.getState().chats.currentChat.id;
-		const usersList = currentProps.chatUsers.map((user) => createBanner(user, chatId));
-		this.setProps({
-			...currentProps,
+		const usersList = newProps.chatUsers.map((user) => createBanner(user, chatId));
+		newProps = {
+			...newProps,
 			usersList
-		});
+		};
+
+		if (!newProps.addUserPopUp && newProps.showAddUserPopUp === true) {
+			newProps = { ...newProps, addUserPopUp: this.addUserPopUp };
+			debounceInvokeFunction(this.dispatchComponentDidMount.bind(this, false));
+		} else if (newProps.addUserPopUp && newProps.showAddUserPopUp === false) {
+			newProps = { ...newProps, addUserPopUp: null };
+		}
+
+		this.setProps(newProps);
 	}
 
 	render(): DocumentFragment {

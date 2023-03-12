@@ -9,7 +9,7 @@ import {
 	transformChatProps
 } from './utils';
 import { withChatPageData } from '../../store';
-import { newChatPopUp, InfoBanner } from './components';
+import { newChatPopUp, InfoBanner, Dialog } from './components';
 import { AuthController, ChatsController } from '../../controllers';
 import { ChatData } from './components/chatData';
 
@@ -54,7 +54,9 @@ class ChatPage extends Block {
 		);
 
 		const chatData = props.showChat
-			? new ChatData({})
+			? new ChatData({
+				chatForm: new Dialog({})
+			})
 			: 'Выберете чат чтобы начать диалог';
 
 		super('div', {
@@ -108,7 +110,9 @@ class ChatPage extends Block {
 
 		const { showChat } = newProps;
 		if (showChat && this.chatData === null) {
-			this.chatData = new ChatData({});
+			this.chatData = new ChatData({
+				chatForm: new Dialog({})
+			});
 		}
 
 		newProps = {

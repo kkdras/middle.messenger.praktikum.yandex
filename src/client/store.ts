@@ -1,5 +1,5 @@
 import { Connector, ConfigureStore, removeItem } from './packages';
-import { deepClone } from './utils';
+import { deepClone, logger } from './utils';
 
 export const defaultStore = {
 	app: {
@@ -37,12 +37,11 @@ export type StateType = typeof defaultStore;
 
 export const errorHandler = (e: Error) => {
 	if (process.env.NODE_ENV === 'production') {
-		const message =
-			e?.message || (e as unknown as IResponse<string>).json || '';
+		const message = e?.message || (e as unknown as IResponse<string>).json || '';
 		// eslint-disable-next-line no-alert
 		alert(`An error has occurred ${message}`);
 	} else {
-		console.error(e);
+		logger(e);
 	}
 
 	const { status } = e as unknown as IResponse<unknown>;
@@ -87,4 +86,13 @@ export const chatUsersAndChatIdSelector = (store: StateType) => ({
 });
 export const withChatUsersAndChatId = connector.connect(
 	chatUsersAndChatIdSelector
+);
+
+export const dialogSelector = (store: StateType) => ({
+	messages: store.chats.currentChat.messages,
+	id: store.user.id,
+	users: store.chats.currentChat.users
+});
+export const withDialogProps = connector.connect(
+	dialogSelector
 );

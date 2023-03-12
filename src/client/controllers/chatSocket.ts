@@ -1,3 +1,5 @@
+import { logger } from '../utils';
+
 type ListenerItem = {
 	type: string;
 	handler: (...args: any[])=> void;
@@ -9,16 +11,18 @@ export class WSController {
 
 	constructor(
 		private url: string,
+		private messageHandler: (e: MessageEvent<any>)=> void,
 		private tryCount: number = 5
 	) {}
 
 	public openConnection() {
 		if (this.ws) {
-			console.warn('connection already exist');
+			logger(new Error('connection already exist'));
 			return;
 		}
 
 		this.ws = new WebSocket(this.url);
+		this.observeWs();
 	}
 
 	public closeConnection() {
@@ -38,7 +42,7 @@ export class WSController {
 
 	private observeWs() {
 		const handleClose = (event: CloseEvent) => {
-			console.log('ws connection is lost');
+			logger('ws connection is lost');
 			this.cleanUp();
 
 			if (event.wasClean) return;
@@ -51,15 +55,30 @@ export class WSController {
 		this.listeners.push({ type: 'close', handler: handleClose });
 
 		const handleMessage = (e: MessageEvent<any>) => {
-			console.log('message received', e.data);
+			const data = JSON.parse(e.data);
+			logger('Получено сообщение', data);
+			this.messageHandler(data);
 		};
 		this.ws?.addEventListener('message', handleMessage);
-		this.listeners.push({ type: 'message', handler: handleMessage });
+		this.listeners.push(
+			{ type: 'message', handler: handleMessage }
+		);
 
 		const handleOpen = () => {
-			console.log('ws connection was opened');
+			logger('ws connection was opened');
 		};
 		this.ws?.addEventListener('open', handleOpen);
 		this.listeners.push({ type: 'open', handler: handleOpen });
+	}
+
+	/**
+	 * sendData
+	 */
+	public sendData(data: Record<string, unknown>) {
+		if (this.ws) {
+			this.ws.send(JSON.stringify(data));
+		} else {
+			logger(new Error('ws doesn\'t exist you can\'t send message'));
+		}
 	}
 }

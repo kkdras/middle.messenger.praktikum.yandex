@@ -1,4 +1,4 @@
-import { debounceInvokeFunction, set } from '../utils';
+import { debounceInvokeFunction, logger, set } from '../utils';
 import EventBus from './Event-bus';
 
 type StoreRestrict = Record<string, unknown>;
@@ -25,7 +25,7 @@ class Store<T extends StoreRestrict> extends EventBus {
 	setState(path: string, value: unknown) {
 		set(this._state, path, value);
 		debounceInvokeFunction(this.emit.bind(this, Store.EVENTS.Updated));
-		if (process.env.NODE_ENV === 'development') console.log(this._state);
+		logger(this._state);
 		return this._state;
 	}
 }

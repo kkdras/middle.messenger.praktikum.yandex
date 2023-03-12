@@ -26,7 +26,7 @@ export const transformChatProps = (props: IChat): InfoBannerProps => {
 		avatar,
 		counter: String(props.unread_count || ''),
 		message: props.last_message?.content || '',
-		time: `${date?.getHours() || ''}  ${date?.getMinutes() || ''}`,
+		time: date ? `${date?.getHours() || ''}:${date?.getMinutes() || ''}` : '',
 		title: props.title
 	};
 };

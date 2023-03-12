@@ -31,11 +31,11 @@ declare interface IChatUserBody {
 
 declare type ITokenResponse = { token: string };
 
-declare interface IDraftMessage {
+declare interface IMessage {
 	chat_id: number;
 	time: string;
 	type: string;
-	user_id: string;
+	user_id: number;
 	content: string;
 	file?: {
 		id: number;
@@ -46,10 +46,4 @@ declare interface IDraftMessage {
 		content_size: number;
 		upload_date: string;
 	};
-}
-
-declare interface IMessage {
-	displayName: string;
-	content: string,
-	time: string
 }

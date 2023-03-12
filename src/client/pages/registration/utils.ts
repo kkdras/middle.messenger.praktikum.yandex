@@ -78,11 +78,11 @@ export const buttons: ButtonPropsType[] = [
 	{
 		children: 'Зарегистрироваться',
 		classes: style.form__sigInButton,
-		viewType: 'outline'
+		viewType: 'outline',
+		type: 'submit'
 	},
 	{
 		children: 'Войти',
-		type: 'submit',
 		events: {
 			click: handleExistAcc
 		}

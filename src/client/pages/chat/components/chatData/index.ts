@@ -8,6 +8,7 @@ import { createBanner } from './utils';
 type PropsType = {
 	chatUsers: IProfileData[];
 	chatId: number;
+	chatForm: Block;
 };
 
 class _ChatData extends Block {

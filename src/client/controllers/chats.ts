@@ -1,3 +1,4 @@
+import { logger } from '../utils/functions';
 import { WSController } from './chatSocket';
 /* eslint-disable implicit-arrow-linebreak */
 import {
@@ -10,6 +11,13 @@ import { errorHandler, Store } from '../store';
 import { ChatsApi } from '../api';
 
 const chatApi = new ChatsApi();
+
+const handleReceiveMessage = (message: unknown) => {
+	const newMessage = message as IMessage;
+	const { messages } = Store.getState().chats.currentChat;
+	if (newMessage.type !== 'message') return;
+	Store.setState('chats.currentChat.messages', messages.concat([newMessage]));
+};
 
 class ChatsControllerClass {
 	ws = null as null | WSController;
@@ -72,13 +80,24 @@ class ChatsControllerClass {
 		}
 	}
 
+	public sendMessage(message: string) {
+		if (this.ws) {
+			this.ws.sendData({
+				type: 'message',
+				content: message
+			});
+		} else {
+			logger(new Error('ws doesn\'t exist you can\'t send message'));
+		}
+	}
+
 	//! it's necessary to remove loader after res or rej
 	private async getChatUsers(id: number) {
 		addLoader();
 
 		const chatUsers = await chatApi.getChatUsers(id);
 		Store.setState('chats.currentChat.users', chatUsers);
-		removeLoader()
+		removeLoader();
 		return chatUsers;
 	}
 
@@ -88,7 +107,7 @@ class ChatsControllerClass {
 		const { token } = await chatApi.createChatToken(id);
 
 		Store.setState('chats.currentChat.token', token);
-		removeLoader()
+		removeLoader();
 		return token;
 	}
 
@@ -113,16 +132,14 @@ class ChatsControllerClass {
 
 			//! create token
 			const tokenPromise = this.createChatToken(chatId).catch(() =>
-				removeLoader()
-			);
+				removeLoader());
 
 			//! get chat users
 			// if it wont possible to load users, then it'll simply
 			// not be possible to remove someone from the chat, but it
 			// wont interfere to work with chat :)
 			const usersPromise = this.getChatUsers(chatId).catch(() =>
-				removeLoader()
-			);
+				removeLoader());
 
 			const [tokenRes] = await Promise.allSettled([tokenPromise, usersPromise]);
 			if (tokenRes.status === 'rejected') {
@@ -132,7 +149,8 @@ class ChatsControllerClass {
 
 			// here we need to add custom handlers on ws events
 			this.ws = new WSController(
-				`wss://ya-praktikum.tech/ws/chats/${userId}/${chatId}/${token}`
+				`wss://ya-praktikum.tech/ws/chats/${userId}/${chatId}/${token}`,
+				handleReceiveMessage
 			);
 			this.ws.openConnection();
 

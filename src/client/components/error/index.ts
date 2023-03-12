@@ -1,6 +1,6 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
-import { Block } from '../../packages';
+import { Block, RouterLink } from '../../packages';
 
 /**
  * @param props.title - основной заголовок
@@ -11,15 +11,24 @@ import { Block } from '../../packages';
  */
 
 type ErrorProps = {
-	errorTitle: string,
-	href: string,
-	errorContent: string,
-	errorLink: string,
-}
+	errorTitle: string;
+	href: string;
+	errorContent: string;
+	linkLabel: string;
+};
 
 class Error extends Block {
-	constructor(args: ErrorProps) {
-		super('div', args);
+	constructor({ href, linkLabel, ...props }: ErrorProps) {
+		const link = new RouterLink({
+			href,
+			children: linkLabel,
+			classes: [style.error__link]
+		});
+
+		super('div', {
+			link,
+			...props
+		});
 	}
 
 	render() {

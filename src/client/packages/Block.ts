@@ -2,20 +2,40 @@
 import { v4 } from 'uuid';
 import Handlebars from 'handlebars';
 import EventBus, { IEventBus } from './Event-bus';
+import { debounceInvokeFunction, deepClone, limitDeepCopy } from '../utils';
 
-type PropsType = Record<string, unknown>
-abstract class Block<T extends PropsType = {}> {
+type ExcludePrefix<T extends string> = string extends T
+	? string
+	: T extends ''
+		? T
+		: T extends `on${infer R}`
+			? R
+			: T
+
+export type BlockEvents = {
+	[eventName in keyof GlobalEventHandlers as ExcludePrefix<eventName>]?:
+	GlobalEventHandlers[eventName]
+}
+
+type PropsType = Record<string, unknown> & {
+	events?: BlockEvents & {
+		['listenOnChildOfTreePosition']?: number,
+	}
+}
+
+abstract class Block<T extends PropsType = PropsType> {
 	static EVENTS = {
 		INIT: 'init',
 		FLOW_CDM: 'flow:component-did-mount',
 		FLOW_CDU: 'flow:component-did-update',
-		FLOW_RENDER: 'flow:render'
+		FLOW_RENDER: 'flow:render',
+		PROPS_UPDATED: 'props-updated'
 	};
 
 	_element: HTMLElement | null = null;
 	_children: Record<string, Block> = {};
 
-	private _meta: {
+	public _meta: {
 		tagName: string;
 		props: null | T;
 		prevProps: null | T;
@@ -128,56 +148,74 @@ abstract class Block<T extends PropsType = {}> {
 		eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
 		eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
 		eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
+		eventBus.on(Block.EVENTS.PROPS_UPDATED, this.propsUpdated.bind(this));
 	}
 
+	// use this method to update nested components that depend on props
+	propsUpdated() { }
+
+	// fires only when store was updated
+	// use this method to update current component props
+	storePropsUpdated() { }
+
+	componentWillUnmount() { }
+
+	dispatchComponentWillUnmount() {
+		this.componentWillUnmount();
+		Object.values(this._children).forEach((component) => {
+			component.dispatchComponentWillUnmount();
+		});
+	}
+
+	// listenOnChildOfTreePosition
+	// default is 0 it mean that events will be listen on
+	// 0 element that is dom container of current component
+	// overwise will find the last children for indicated steps
+	// for example if component tree is <div><span><a></a></span><input /></div> and
+	// size is 6 element that will be listen is first a tag
 	_addListeners() {
-		const prevEvents = this._meta.prevProps?.events || {};
 		const newEvents = this.props?.events || {};
 
-		const onFirstChildrenPrev = !!(prevEvents as any).listenOnFirstChildren as boolean;
-		const onFirstChildrenNow = !!(newEvents as any).listenOnFirstChildren as boolean;
+		const onFirstChildrenNow = newEvents.listenOnChildOfTreePosition ?? 0;
 
-		const target = !onFirstChildrenNow
-			? this.getContent()
-			: this.getContent()?.firstElementChild;
+		let target = this.getContent();
+		let i = onFirstChildrenNow;
+		while (target && i > 0) {
+			const newTarget = target.firstElementChild;
+			if (!newTarget) break;
+			target = newTarget as HTMLElement;
+			i -= 1;
+		}
+
+		if (!target) return;
 
 		(target as any).__BlockInstance = this;
 
 		Object.keys(newEvents).forEach((eventName) => {
 			const newHandler = newEvents[eventName as keyof typeof newEvents];
-			const prevHandler = prevEvents[eventName as keyof typeof newEvents];
-			if (eventName === 'listenOnFirstChildren') return;
-
-			if (
-				newHandler === prevHandler
-				&& onFirstChildrenNow === onFirstChildrenPrev
-			) return;
-
-			target?.addEventListener(eventName, newHandler);
+			if (typeof newHandler !== 'function') return;
+			target?.addEventListener(eventName, newHandler as EventListenerOrEventListenerObject);
 		});
 	}
 
 	_removeListeners() {
 		const prevEvents = this._meta.prevProps?.events || {};
-		const newEvents = this._meta.props?.events || {};
 
-		const onFirstChildrenPrev = !!(prevEvents as any).listenOnFirstChildren as boolean;
-		const onFirstChildrenNow = !!(newEvents as any).listenOnFirstChildren as boolean;
+		const onFirstChildrenPrev = prevEvents.listenOnChildOfTreePosition ?? 0;
+
+		let target = this.getContent();
+		let i = onFirstChildrenPrev;
+		while(i > 0 && target) {
+			const newElement = target.firstElementChild as HTMLElement;
+			if (newElement) target = newElement;
+			i -= 1;
+		}
+
+		if (!target) return;
 		Object.keys(prevEvents).forEach((eventName) => {
-			const newHandler = newEvents[eventName as keyof typeof newEvents];
-			const prevHandler = prevEvents[eventName as keyof typeof newEvents];
-			if (eventName === 'listenOnFirstChildren') return;
-
-			if (
-				newHandler === prevHandler
-				&& onFirstChildrenNow === onFirstChildrenPrev
-			) return;
-
-			const target = !onFirstChildrenNow
-				? this.getContent()
-				: this.getContent()?.firstElementChild;
-
-			target?.removeEventListener(eventName, prevHandler);
+			const prevHandler = prevEvents[eventName as keyof typeof prevEvents];
+			if (typeof prevHandler !== 'function') return;
+			target?.removeEventListener(eventName, prevHandler as EventListenerOrEventListenerObject);
 		});
 	}
 
@@ -201,8 +239,8 @@ abstract class Block<T extends PropsType = {}> {
 	// eslint-disable-next-line class-methods-use-this
 	componentDidMount() {}
 
-	dispatchComponentDidMount() {
-		this._eventBus().emit(Block.EVENTS.FLOW_CDM);
+	dispatchComponentDidMount(useForCurrent: boolean = true) {
+		if(useForCurrent) this._eventBus().emit(Block.EVENTS.FLOW_CDM);
 		Object.values(this._children).forEach((el) => {
 			el.dispatchComponentDidMount();
 		});
@@ -228,10 +266,11 @@ abstract class Block<T extends PropsType = {}> {
 		// this._lookForChildren();
 		Object.keys(nextProps).forEach((key) => {
 			if (!(key in (this._meta.prevProps as T))) delete this.props[key];
-
 		});
 
 		Object.assign(this.props, nextProps);
+		(this as unknown as Block)._eventBus().emit(Block.EVENTS.PROPS_UPDATED);
+		this._writeChildren();
 	};
 
 	get element() {
@@ -260,22 +299,14 @@ abstract class Block<T extends PropsType = {}> {
 		return this.element;
 	}
 
-	_manageUpdateChildren<S>(name: keyof S, target: S, newValue: unknown): boolean {
+	_manageUpdateChildren<S>(name: keyof S, target: S, newValue: unknown): void {
 		const oldValue = target[name] as unknown;
 		if (
 			oldValue
 			&& typeof oldValue === 'object'
 			&& oldValue instanceof Block
-		) if (oldValue === newValue) return true;
-
-		// here we can dispatch on nested node component will unmout
-
-		if (
-			typeof newValue === 'object'
-			&& newValue instanceof Block
-		) this._children[name as string] = newValue;
-
-		return false;
+			&& oldValue !== newValue
+		) this.dispatchComponentWillUnmount();
 	}
 
 	_makePropsProxy(userProps: T) {
@@ -307,21 +338,21 @@ abstract class Block<T extends PropsType = {}> {
 			set(target, propertyName, newValue) {
 				if (typeof propertyName === 'symbol') throw new Error('props key must be string');
 
-				// if return true it's meaning that children are equal
-				const breakCycle =					self._manageUpdateChildren(propertyName, target, newValue);
-
-				if (breakCycle) return true;
+				self._manageUpdateChildren(propertyName, target, newValue);
 
 				target[propertyName as keyof typeof target] = newValue;
-				emitCDU();
+				debounceWrapper();
 				return true;
 			},
 			deleteProperty(target, propertyName) {
 				if (typeof propertyName === 'symbol') throw new Error('props key must be string');
 
-				if (!(propertyName in target)) throw new Error('property that you try to delete does\'t exist in target object');
+				if (!(propertyName in target)) {
+					throw new Error('property that you try to delete does\'t exist in target object');
+				}
 				const value = target[propertyName];
 
+				self._manageUpdateChildren(propertyName, target, undefined);
 				if (
 					typeof value === 'object'
 					&& value instanceof Block
@@ -351,7 +382,7 @@ abstract class Block<T extends PropsType = {}> {
 	hide() {
 		const el = this.getContent();
 		if (el) el.style.display = 'none';
-
+		this.dispatchComponentWillUnmount();
 	}
 
 	toString() {
@@ -362,47 +393,4 @@ abstract class Block<T extends PropsType = {}> {
 	}
 }
 
-const debounceInvokeFunction = (callback: ()=> void, delay = 0) => {
-	const timeout = setTimeout(() => {
-		callback();
-	}, delay);
-
-	return timeout;
-};
-
-const limitDeepCopy = (value: unknown): boolean => !(!!value
-	&& typeof value === 'object'
-	&& value instanceof Block);
-
 export default Block;
-
-type TKey = keyof any;
-
-type ArrTarget = unknown[];
-
-type ObjectTarget = { [key: TKey]: unknown }
-
-type TargetType = ArrTarget | ObjectTarget;
-
-const deepClone = <T extends TargetType>(
-	target: T,
-	limitation?: (arg: ObjectTarget)=> boolean
-): T => {
-	function isObjectOrArray(item: unknown): item is TargetType {
-		return (typeof item === 'object' || Array.isArray(item)) && !!item;
-	}
-
-	const handleObject = () => Object.entries(target)
-		.reduce((acc, [key, value]) => {
-			acc[key] = isObjectOrArray(value)
-				&& (!limitation || (!Array.isArray(value) && limitation(value)))
-				? deepClone(value, limitation)
-				: value;
-			return acc;
-		}, {} as ObjectTarget) as T;
-
-	const handleArray =	(arr: unknown[]) => arr
-		.map((item) => (isObjectOrArray(item) ? deepClone(item, limitation) : item)) as T;
-
-	return Array.isArray(target) ? handleArray(target) : handleObject();
-};

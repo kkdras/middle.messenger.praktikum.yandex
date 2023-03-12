@@ -1,30 +1,65 @@
 import tmp from 'bundle-text:./index.hbs';
+import { withPasswordMode } from '../../store';
+import { link } from './components/link/index';
 import * as styles from './style.module.scss';
 import arrowImg from '../../public/arrow.png';
-import avatarImg from '../../public/avatar.jpg';
-import {
-	handleSubmit
-} from '../../utils/validation';
 import { Block } from '../../packages';
-import { Form } from './components';
+import { Form, PasswordForm } from './components';
+import { Loader } from '../../ui';
+import { AuthController } from '../../controllers';
 
 type PropsType = {
 	href: string,
-	leftBarImg: string,
-	children: Block
+	link: Block,
+	form: Block,
+	loader: Block,
+	passwordMode: boolean
 }
 
 class ProfilePage extends Block {
-	constructor(args: PropsType) {
+	profileForm: Block | null;
+	passwordFrom: Block | null;
+	constructor(args: Omit<PropsType, 'form'>) {
+		const profileForm = new Form({});
+		const passwordForm = new PasswordForm({});
+		// fix it
+		passwordForm.dispatchComponentDidMount();
+
 		super('div', {
 			class: {
 				pageContainer: styles.pageContainer,
 				leftBar: styles.leftBar,
 				profile: styles.profile
 			},
-			events: handleSubmit,
+			form: profileForm,
 			...args
-		});
+		} as PropsType);
+
+		this.profileForm = profileForm;
+		this.passwordFrom = passwordForm;
+	}
+
+	override componentDidMount() {
+		AuthController.getProfile();
+	}
+
+	override propsUpdated() {
+		// eslint-disable-next-line prefer-destructuring
+		const passwordMode = (this.props as PropsType).passwordMode;
+		const currentForm = (this.props as PropsType).form;
+		const prevProps = this._meta.props as PropsType;
+
+		if (passwordMode === true && currentForm instanceof Form) {
+			this.setProps({
+				...prevProps,
+				form: this.passwordFrom
+			} as PropsType);
+		} else if (passwordMode === false && currentForm instanceof PasswordForm) {
+			this.setProps({
+				...prevProps,
+				form: this.profileForm
+			} as PropsType);
+		}
 	}
 
 	render(): DocumentFragment {
@@ -32,13 +67,10 @@ class ProfilePage extends Block {
 	}
 }
 
-const page = new ProfilePage({
-	href: '/',
-	leftBarImg: arrowImg,
-	children: new Form({
-		avatarImg,
-		name: 'Константин'
-	})
-});
+const ConnectedProfilePage = withPasswordMode(ProfilePage);
 
-export default page;
+export default () => new ConnectedProfilePage({
+	href: '/',
+	loader: new Loader({}),
+	link: link({ href: '/', iconPath: arrowImg })
+});

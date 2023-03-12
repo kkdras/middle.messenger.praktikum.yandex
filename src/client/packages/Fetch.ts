@@ -1,18 +1,18 @@
+/* eslint-disable class-methods-use-this */
 enum METHOD {
 	GET = 'GET',
 	POST = 'POST',
 	PUT = 'PUT',
-	DELETE = 'DELETE',
-};
+	DELETE = 'DELETE'
+}
 
 /**
-* Функцию реализовывать здесь необязательно, но может помочь не плодить логику у GET-метода
-* На входе: объект. Пример: {a: 1, b: 2, c: {d: 123}, k: [1, 2, 3]}
-* На выходе: строка. Пример: ?a=1&b=2&c=[object Object]&k=1,2,3
-*/
+ * Функцию реализовывать здесь необязательно, но может помочь не плодить логику у GET-метода
+ * На входе: объект. Пример: {a: 1, b: 2, c: {d: 123}, k: [1, 2, 3]}
+ * На выходе: строка. Пример: ?a=1&b=2&c=[object Object]&k=1,2,3
+ */
 function queryStringify(data: Record<any, any>) {
-	const queryStr = Object
-		.entries(data)
+	const queryStr = Object.entries(data)
 		.map((item) => item.join('='))
 		.join('&');
 
@@ -20,70 +20,115 @@ function queryStringify(data: Record<any, any>) {
 }
 
 type OptionsType = {
-	data?: Record<string, unknown>,
-	timeout?: number,
-	headers?: Record<string, string>,
-	method?: METHOD
-}
+	data?: Record<string, unknown> | FormData;
+	timeout?: number;
+	headers?: Record<string, string>;
+	method?: METHOD;
+	parseResult?: boolean;
+};
+
+const { BASE_PATH } = process.env;
+
+const defaultHeaders = {
+	'Content-type': 'application/json; charset=utf-8'
+} as const;
 
 class HTTPTransport {
-	get(url: string, options: OptionsType = {}) {
+	readonly basePath: string;
+	constructor(pathPrefix: string) {
+		this.basePath = BASE_PATH + pathPrefix;
+	}
+
+	async get<T = unknown>(url: string, options: OptionsType = {}) {
 		const { data = {} } = options;
-		return this.request(
-			url + queryStringify(data),
+		return this.request<T>(
+			this.basePath + url + queryStringify(data),
 			{ ...options, method: METHOD.GET },
+			options.timeout
+		);
+	} ;
+
+	async put<T = unknown>(url: string, options: OptionsType = {}) {
+		return this.request<T>(
+			this.basePath + url,
+			{
+				...options,
+				method: METHOD.PUT
+			},
+			options.timeout
+		);
+	}
+
+	async post<T = unknown>(url: string, options: OptionsType = {}) {
+		return this.request<T>(
+			this.basePath + url,
+			{ ...options, method: METHOD.POST },
 			options.timeout
 		);
 	};
 
-	put = (url: string, options: OptionsType = {}) => this.request(url, {
-		...options, method: METHOD.PUT
-	}, options.timeout);
+	async delete<T = unknown>(url: string, options: OptionsType = {}) {
+		this.request<T>(
+			this.basePath + url,
+			{
+				...options,
+				method: METHOD.DELETE
+			},
+			options.timeout
+		);
+	};
 
-	post = (url: string, options: OptionsType = {}) => this.request(
-		url,
-		{ ...options, method: METHOD.POST },
-		options.timeout
-	);
-
-	delete = (url: string, options: OptionsType = {}) => this.request(url, {
-		...options, method: METHOD.DELETE
-	}, options.timeout);
-
-	// eslint-disable-next-line class-methods-use-this
-	request = (url: string, options: OptionsType, timeout = 5000) => {
+	async request<T>(url: string, options: OptionsType, timeout = 5000) {
 		const {
-			headers,
-			data,
-			method = METHOD.GET
+			headers = defaultHeaders, data, method = METHOD.GET, parseResult = true
 		} = options;
 
-		return new Promise((resolve, reject) => {
+		const isFormData = data instanceof FormData;
+
+		// eslint-disable-next-line curly
+		if (isFormData) {
+			delete headers['Content-type'];
+		}
+
+		const rawData = isFormData ? data : JSON.stringify(data);
+
+		return new Promise<IResponse<T>>((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
+
+			xhr.withCredentials = true;
+
 			xhr.open(method, url);
 
 			xhr.timeout = timeout;
 
-			if (headers) {
-				Object.keys(headers).forEach((name) => {
-					const value = headers[name];
-					xhr.setRequestHeader(name, value);
-				});
-			}
+			Object.keys(headers).forEach((name) => {
+				const value = headers[name];
+				xhr.setRequestHeader(name, value);
+			});
 
-			xhr.onload = function () {
-				resolve(xhr);
+			const handleError = () => {
+				// eslint-disable-next-line prefer-promise-reject-errors
+				reject({
+					json: null,
+					status: xhr.status
+				});
 			};
 
-			xhr.onabort = reject;
-			xhr.onerror = reject;
-			xhr.ontimeout = reject;
+			xhr.onload = () => {
+				if (xhr.status !== 200) handleError();
+				resolve({
+					json: parseResult ? JSON.parse(xhr.response) : null,
+					status: xhr.status
+				});
+			};
+
+			xhr.onabort = handleError;
+			xhr.onerror = handleError;
+			xhr.ontimeout = handleError;
 
 			if (method === METHOD.GET || !data) xhr.send();
-			else xhr.send(data as any);
-
+			else xhr.send(rawData);
 		});
-
 	};
 }
 

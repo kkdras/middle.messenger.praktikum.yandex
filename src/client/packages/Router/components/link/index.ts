@@ -7,7 +7,8 @@ type PropsType = {
 	classes?: Parameters<typeof classNames>;
 	href: string;
 	events?: Record<string, (e: Event)=> void>;
-	children: string
+	children: string;
+	type?: 'back';
 };
 
 const router = new Router();
@@ -20,7 +21,8 @@ class RouterLink extends Block {
 				click: (e: Event) => {
 					e.preventDefault();
 					const path = (e.currentTarget as HTMLAnchorElement).href.replace(document.location.origin, '');
-					router.go(path);
+					if (props.type === 'back') router.back();
+					else router.go(path);
 				},
 				listenOnChildOfTreePosition: 1,
 				...events

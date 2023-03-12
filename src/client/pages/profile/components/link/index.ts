@@ -10,5 +10,6 @@ type PropsType = {
 export const link = ({ href, iconPath }: PropsType) => new RouterLink({
 	children: Handlebars.compile(tmpl)({ iconPath }),
 	href,
-	classes: ['ibj']
+	classes: ['ibj'],
+	type: 'back'
 });

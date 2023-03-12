@@ -19,7 +19,7 @@ router
 	.use('/login', loginPage)
 	.use('/externalError', externalError)
 	.use('/notFound', notFound, true)
-	.use('/chat', chat)
+	.use('/messenger', chat)
 	.use('/profile', profile)
 	.use('/registration', registrationPage);
 

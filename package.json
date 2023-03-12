@@ -8,7 +8,7 @@
     "dev": "parcel --open --target client --dist-dir build",
     "start": "node ./build/server/index.js",
     "build": "npm run build:client & npm run build:server",
-    "build:client": "parcel build --target client --no-cache",
+    "build:client": "parcel build --target client --no-cache && cp _redirects build/client/_redirects",
     "build:server": "parcel build --target server --no-cache",
     "test": "node --test",
     "clean": "rm -r .parcel-cache build",

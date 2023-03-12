@@ -49,7 +49,7 @@ class AuthControllerClass {
 			removeLoader();
 			setItem('session', String(1));
 
-			router.go('/profile');
+			router.go('/messenger');
 		} catch (e) {
 			removeLoader();
 			errorHandler(e as Error);

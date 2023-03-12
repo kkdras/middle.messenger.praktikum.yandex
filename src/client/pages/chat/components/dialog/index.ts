@@ -50,6 +50,16 @@ class _Dialog extends Block {
 			...currentProps,
 			listMessages: [...this.listMessages, ...newMessages]
 		});
+
+		setTimeout(() => {
+			const messagesContainer = this.getContent()
+				?.querySelector('div[data-type=\'messagesContainer\']');
+
+			messagesContainer?.scrollBy({
+				behavior: 'smooth',
+				top: messagesContainer.scrollHeight
+			});
+		}, 100);
 	}
 
 	render(): DocumentFragment {

@@ -11,7 +11,9 @@ export class WSController {
 
 	constructor(
 		private url: string,
-		private messageHandler: (e: MessageEvent<any>)=> void,
+		private handleMessage: (e: MessageEvent<any>)=> void,
+		private handleOpen: (ws: WSController)=> void,
+		private handleError: ()=> void,
 		private tryCount: number = 5
 	) {}
 
@@ -57,7 +59,7 @@ export class WSController {
 		const handleMessage = (e: MessageEvent<any>) => {
 			const data = JSON.parse(e.data);
 			logger('Получено сообщение', data);
-			this.messageHandler(data);
+			this.handleMessage(data);
 		};
 		this.ws?.addEventListener('message', handleMessage);
 		this.listeners.push(
@@ -66,9 +68,17 @@ export class WSController {
 
 		const handleOpen = () => {
 			logger('ws connection was opened');
+			this.handleOpen(this);
 		};
 		this.ws?.addEventListener('open', handleOpen);
 		this.listeners.push({ type: 'open', handler: handleOpen });
+
+		const handleError = () => {
+			logger('fail open ws connection');
+			this.handleError();
+		};
+		this.ws?.addEventListener('error', handleError);
+		this.listeners.push({ type: 'error', handler: handleError });
 	}
 
 	/**

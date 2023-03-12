@@ -13,10 +13,12 @@ import { ChatsApi } from '../api';
 const chatApi = new ChatsApi();
 
 const handleReceiveMessage = (message: unknown) => {
-	const newMessage = message as IMessage;
+	const newMessage = message as IMessage | IMessage[];
 	const { messages } = Store.getState().chats.currentChat;
-	if (newMessage.type !== 'message') return;
-	Store.setState('chats.currentChat.messages', messages.concat([newMessage]));
+	if (!Array.isArray(message) && (newMessage as IMessage).type !== 'message') return;
+	Store.setState('chats.currentChat.messages', messages.concat(
+		Array.isArray(message) ? message : [message]
+	));
 };
 
 class ChatsControllerClass {
@@ -147,12 +149,20 @@ class ChatsControllerClass {
 			}
 			const token = tokenRes.value;
 
-			// here we need to add custom handlers on ws events
-			this.ws = new WSController(
-				`wss://ya-praktikum.tech/ws/chats/${userId}/${chatId}/${token}`,
-				handleReceiveMessage
-			);
-			this.ws.openConnection();
+			this.ws = await new Promise((res, rej) => {
+				const ws = new WSController(
+					`wss://ya-praktikum.tech/ws/chats/${userId}/${chatId}/${token}`,
+					handleReceiveMessage,
+					(wsInstance) => res(wsInstance),
+					() => rej(new Error('fail open ws connection'))
+				);
+				ws.openConnection();
+			});
+
+			this.ws?.sendData({
+				content: '0',
+				type: 'get old'
+			});
 
 			Store.setState('chats.currentChat.id', chatId);
 			Store.setState('chats.showChat', true);

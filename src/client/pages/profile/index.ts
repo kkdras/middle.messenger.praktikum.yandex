@@ -22,8 +22,6 @@ class ProfilePage extends Block {
 	constructor(args: Omit<PropsType, 'form'>) {
 		const profileForm = new Form({});
 		const passwordForm = new PasswordForm({});
-		// fix it
-		passwordForm.dispatchComponentDidMount();
 
 		super('div', {
 			class: {
@@ -44,12 +42,12 @@ class ProfilePage extends Block {
 	}
 
 	override propsUpdated() {
-		// eslint-disable-next-line prefer-destructuring
 		const passwordMode = (this.props as PropsType).passwordMode;
 		const currentForm = (this.props as PropsType).form;
 		const prevProps = this._meta.props as PropsType;
 
 		if (passwordMode === true && currentForm instanceof Form) {
+			this.passwordFrom?.dispatchComponentDidMount();
 			this.setProps({
 				...prevProps,
 				form: this.passwordFrom

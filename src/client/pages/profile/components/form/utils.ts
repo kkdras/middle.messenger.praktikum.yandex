@@ -2,7 +2,6 @@ import { AuthController, UserController } from '../../../../controllers';
 import { Store } from '../../../../store';
 
 export const handleUpdateProfile = (e: Event) => {
-	// eslint-disable-next-line prefer-destructuring
 	const passwordMode = Store.getState().app.passwordMode;
 	if (passwordMode) {
 		Store.setState('app.passwordMode', false);
@@ -43,7 +42,6 @@ export const handleChangeAvatar = (e: Event) => {
 
 export const handleChangePassword = (e: Event) => {
 	e.preventDefault();
-	// eslint-disable-next-line prefer-destructuring
 	const passwordMode = Store.getState().app.passwordMode;
 	if (!passwordMode) Store.setState('app.passwordMode', true);
 };

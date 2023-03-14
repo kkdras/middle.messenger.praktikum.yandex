@@ -16,9 +16,11 @@ export const handleAddUser = (e: Event) => {
 	Store.setState('app.showAddUserPopUp', true);
 };
 
+const resourcesPath = process.env.RESOURCES_PATH;
+
 export const createBanner = (user: IProfileData, chatId: number) =>
 	new InfoBanner({
-		avatar: (user.avatar && `https://ya-praktikum.tech/api/v2/resources/${user.avatar}`) || defaultAvatar,
+		avatar: (user.avatar && `${resourcesPath}/${user.avatar}`) || defaultAvatar,
 		counter: '',
 		message: '',
 		title: user.display_name || `${user.first_name} ${user.second_name}`,

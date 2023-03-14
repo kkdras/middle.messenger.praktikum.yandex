@@ -49,7 +49,7 @@ type PropsType = {
 	profileData: StateType['user'],
 }
 
-const host = 'https://ya-praktikum.tech/api/v2/resources';
+const resourcesPath = process.env.RESOURCES_PATH;
 class ProfileForm extends Block {
 	fieldsKeys: FieldsKeys[];
 	constructor({ profileData }: PropsType) {
@@ -91,7 +91,7 @@ class ProfileForm extends Block {
 				profileData: style.profile__data,
 				profileChangePassword: style.profile__data
 			},
-			avatarImg: loadedProfile ? host + loadedProfile : avatarImg
+			avatarImg: loadedProfile ? resourcesPath + loadedProfile : avatarImg
 		});
 	}
 };

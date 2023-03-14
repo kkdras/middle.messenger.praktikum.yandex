@@ -34,7 +34,7 @@ class Connector<S extends InstanceType<StoreType>> {
 					});
 
 					store.on(Store.EVENTS.Updated, () => {
-						const newMappedStore = selector(store.getState() as S['_state']);
+						const newMappedStore = deepClone(selector(store.getState() as S['_state']));
 						if (isEqual(mappedStore, newMappedStore)) return;
 						mappedStore = newMappedStore;
 						this.setProps({ ...this._meta.props, ...newMappedStore });

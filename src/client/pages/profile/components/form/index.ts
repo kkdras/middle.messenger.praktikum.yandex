@@ -55,9 +55,9 @@ const fields: Record<FieldsKeys, InputPropsType & { instance?: InputClass }> = {
 	display_name: {
 		id: 'display_name',
 		label: 'Имя в чате',
-		pattern: NAME_PATTERN,
+		pattern: '[A-z0-9-_]+',
 		defaultValue: '',
-		errorMessage: nameError
+		errorMessage: 'Буквы, цыфры, дефис, нижнее подчеркивание'
 	},
 	phone: {
 		id: 'phone',
@@ -96,7 +96,7 @@ type PropsType = {
 	profileData: StateType['user'],
 }
 
-const host = 'https://ya-praktikum.tech/api/v2/resources';
+const resourcesPath = process.env.RESOURCES_PATH;
 class ProfileForm extends Block {
 	fieldsKeys: FieldsKeys[];
 	constructor({ profileData }: PropsType) {
@@ -113,18 +113,21 @@ class ProfileForm extends Block {
 			return key;
 		}) as ButtonsKeys[];
 
+		const loadedProfile = profileData.avatar;
+
 		super('div', {
 			fields: fieldsKeys.map((key) => fields[key].instance),
 			actions: buttonsKeys.map((key) => buttons[key].instance),
 			events: {
 				submit: handleUpdateProfile
 			},
-			profileData
+			profileData,
+			avatarImg: loadedProfile ? resourcesPath + loadedProfile : avatarImg
 		});
 		this.fieldsKeys = fieldsKeys;
 	}
 
-	override propsUpdated() {
+	override storePropsUpdated() {
 		this.fieldsKeys.forEach((key) => {
 			const fieldData = fields[key];
 			const newValue = (this.props as PropsType).profileData[key as FieldsKeys];
@@ -136,11 +139,15 @@ class ProfileForm extends Block {
 
 			fieldData.instance!.setProps(nextProps);
 		});
+
+		const loadedProfile = (this._meta.props as PropsType).profileData.avatar;
+		this.setProps({
+			...this._meta.props,
+			avatarImg: loadedProfile ? resourcesPath + loadedProfile : avatarImg
+		});
 	}
 
 	render(): DocumentFragment {
-		const loadedProfile = (this.props as PropsType).profileData.avatar;
-
 		return Block.compile(tmp, {
 			...this.props,
 			class: {
@@ -151,8 +158,7 @@ class ProfileForm extends Block {
 				profileName: style.profile__headerName,
 				profileData: style.profile__data,
 				profileChangePassword: style.profile__data
-			},
-			avatarImg: loadedProfile ? host + loadedProfile : avatarImg
+			}
 		});
 	}
 };

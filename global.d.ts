@@ -8,11 +8,16 @@ declare module '*.scss' {
 	export default classes;
 }
 
+interface env {
+	[index: string]: string;
+}
+
 declare const process = {
 	env: {
 		NODE_ENV: string,
-		BASE_PATH: string
-	}
+		BASE_PATH: string,
+		RESOURCES_PATH: string
+	} as env
 };
 
 declare module 'bundle-text:./*' {

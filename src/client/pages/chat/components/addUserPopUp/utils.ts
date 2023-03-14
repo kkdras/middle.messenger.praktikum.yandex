@@ -24,9 +24,11 @@ export const handleAddUser = (chatId: number, userId: number) => {
 	});
 };
 
+const resourcesPath = process.env.RESOURCES_PATH;
+
 export const createBanner = (chatId: number, user: IProfileData) =>
 	new InfoBanner({
-		avatar: (user.avatar && `https://ya-praktikum.tech/api/v2/resources/${user.avatar}`) || defaultAvatar,
+		avatar: (user.avatar && `${resourcesPath}/${user.avatar}`) || defaultAvatar,
 		counter: '',
 		message: '',
 		title: user.display_name || `${user.first_name} ${user.second_name}`,

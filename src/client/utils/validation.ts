@@ -2,7 +2,7 @@ import { Block } from '../packages';
 
 export const NAME_PATTERN = '^[А-ЯЁA-Z][а-яёa-z-]*$';
 
-export const LOGIN_PATTERN = '^(?:[0-9]+[A-z]|[A-z]+[0-9])[A-z0-9]*$';
+export const LOGIN_PATTERN = '^(?:[0-9]+[A-z_-]|[A-z_-]+[0-9]|[A-z_-]+)[A-z0-9-_]*$';
 
 export const EMAIL_PATTERN = '^[-.\\w]+@([\\w-]+\\.)+[\\w-]+$';
 

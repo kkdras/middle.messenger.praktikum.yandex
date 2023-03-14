@@ -18,8 +18,10 @@ export const transformChatProps = (props: IChat): InfoBannerProps => {
 		? new Date(props.last_message.time)
 		: null;
 
+	const resourcesPath = process.env.RESOURCES_PATH;
+
 	const avatar = props.avatar
-		? `https://ya-praktikum.tech/api/v2/resources/${props.avatar}`
+		? `${resourcesPath}/${props.avatar}`
 		: defaultAvatar;
 
 	return {

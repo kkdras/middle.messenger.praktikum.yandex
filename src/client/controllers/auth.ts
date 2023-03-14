@@ -1,48 +1,48 @@
 import { setItem } from '../packages/Storage';
-import { defaultStore, errorHandler, Store } from '../store';
+import { defaultStore, Store } from '../store';
 import { AuthApi } from '../api';
 import { Router } from '../packages';
 import {
-	checkValidSignUpData, checkValidSignInData, addLoader, removeLoader
+	checkValidSignUpData,
+	checkValidSignInData,
+	removeLoader,
+	WithLoader,
+	AsyncCatch
 } from './utils';
 
 const authAPI = new AuthApi();
 const router = new Router();
 
 class AuthControllerClass {
+	@WithLoader
+	@AsyncCatch()
 	public async signUp(data: SignUp.body) {
-		try {
-			addLoader();
-			checkValidSignUpData(data);
-			const userId = await authAPI.signUp(data);
+		checkValidSignUpData(data);
+		const userId = await authAPI.signUp(data);
 
-			setItem('session', String(1));
-			removeLoader();
-			Store.setState('user.id', userId);
-			router.go('/profile');
-		} catch (e) {
-			removeLoader();
-			errorHandler(e as Error);
-		}
+		setItem('session', String(1));
+		removeLoader();
+		Store.setState('user.id', userId);
+		router.go('/profile');
 	}
 
+	@WithLoader
+	@AsyncCatch()
 	public async getProfile() {
 		try {
-			addLoader();
 			const userData = await authAPI.getProfile();
 			Store.setState('user', userData);
 			removeLoader();
-
 		} catch (e) {
-			removeLoader();
-			errorHandler(e as Error);
 			router.go('/login');
+			throw e;
 		}
 	}
 
+	@WithLoader
+	@AsyncCatch()
 	public async signIn(data: SignIn.body) {
 		try {
-			addLoader();
 			checkValidSignInData(data);
 			await authAPI.signIn(data);
 
@@ -51,25 +51,19 @@ class AuthControllerClass {
 
 			router.go('/messenger');
 		} catch (e) {
-			removeLoader();
-			errorHandler(e as Error);
 			router.go('/login');
+			throw e;
 		}
 	}
 
+	@WithLoader
+	@AsyncCatch()
 	public async logout() {
-		try {
-			addLoader();
-			await authAPI.logout();
+		await authAPI.logout();
+		Store.setState('user', defaultStore.user);
+		removeLoader();
 
-			Store.setState('user', defaultStore.user);
-			removeLoader();
-
-			router.go('/login');
-		} catch (e) {
-			removeLoader();
-			errorHandler(e as Error);
-		}
+		router.go('/login');
 	}
 }
 

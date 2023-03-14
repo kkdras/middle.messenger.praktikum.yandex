@@ -1,70 +1,47 @@
 import {
-	checkValidNewPassword, checkValidAvatar, checkValidNewProfile, removeLoader, addLoader
+	checkValidNewPassword,
+	checkValidAvatar,
+	checkValidNewProfile,
+	AsyncCatch,
+	WithLoader
 } from './utils';
-import { errorHandler, Store } from '../store';
+import { Store } from '../store';
 import { UserApi } from '../api';
 
 const userApi = new UserApi();
 
 class UserControllerClass {
+	@WithLoader
+	@AsyncCatch()
 	public async updateProfileData(data: IBaseProfileData) {
-		try {
-			addLoader();
-			checkValidNewProfile(data);
-			const userData = await userApi.changeProfile(data);
+		checkValidNewProfile(data);
+		const userData = await userApi.changeProfile(data);
 
-			Store.setState('user', userData);
-			removeLoader();
-
-		} catch (e) {
-			removeLoader();
-			errorHandler(e as Error);
-		}
+		Store.setState('user', userData);
 	}
 
+	@WithLoader
+	@AsyncCatch()
 	public async changePassword(data: IPasswordBody) {
-		try {
-			addLoader();
-			checkValidNewPassword(data);
-			await userApi.changePassword(data);
-
-			removeLoader();
-
-		} catch (e) {
-			removeLoader();
-			errorHandler(e as Error);
-		}
+		checkValidNewPassword(data);
+		await userApi.changePassword(data);
 	}
 
+	@WithLoader
+	@AsyncCatch()
 	public async changeAvatar(data: FormData) {
-		try {
-			addLoader();
-			checkValidAvatar(data);
+		checkValidAvatar(data);
 
-			const newAvatar = await userApi.changeAvatar(data);
-
-			Store.setState('user.avatar', newAvatar);
-
-			removeLoader();
-		} catch (e) {
-			removeLoader();
-			errorHandler(e as Error);
-		}
+		const newAvatar = await userApi.changeAvatar(data);
+		Store.setState('user.avatar', newAvatar);
 	}
 
+	@WithLoader
+	@AsyncCatch()
 	public async searchUser(data: ISearchUserBody) {
-		try {
-			addLoader();
+		const searchResult = await userApi.searchUser(data);
 
-			const searchResult = await userApi.searchUser(data);
-
-			Store.setState('chats.searchUsers', searchResult);
-
-			removeLoader();
-		} catch (e) {
-			removeLoader();
-			errorHandler(e as Error);
-		}
+		Store.setState('chats.searchUsers', searchResult);
 	}
 }
 

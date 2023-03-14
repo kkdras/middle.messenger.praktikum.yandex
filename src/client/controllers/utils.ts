@@ -1,4 +1,6 @@
-import { Store } from '../store';
+/* eslint-disable consistent-return */
+/* eslint-disable no-param-reassign */
+import { errorHandler, Store } from '../store';
 
 export const checkValidSignUpData = (data: object) => {
 	const valid = (
@@ -75,3 +77,44 @@ export function assertsAllSettledPromise<T>(
 		throwError(typeof reason === 'string' ? reason : altMessage);
 	}
 }
+
+export const WithLoader = (
+	_target: object,
+	_propertyKey: string,
+	descriptor: TypedPropertyDescriptor<(...args: any[])=> any>
+): TypedPropertyDescriptor<(...args: any[])=> any> => {
+	const oldValue = descriptor.value;
+
+	descriptor.value = function (...args) {
+		addLoader();
+		const promise = oldValue!.apply(this, args)
+			.finally(() => removeLoader());
+
+		return promise;
+	};
+
+	return descriptor;
+};
+
+export const AsyncCatch = (
+	{ nextThrow }: { nextThrow: boolean } = { nextThrow: false }
+) => {
+	return (
+		_target: object,
+		_propertyKey: string,
+		descriptor: TypedPropertyDescriptor<(...args: any[])=> any>
+	): TypedPropertyDescriptor<(...args: any[])=> any> => {
+		const oldValue = descriptor.value;
+		descriptor.value = async function (...args: any[]) {
+			try {
+				const res = await oldValue!.apply(this, args);
+				return res;
+			} catch(e) {
+				errorHandler(e as Error);
+				if (nextThrow) throw e;
+			}
+		};
+
+		return descriptor;
+	};
+};

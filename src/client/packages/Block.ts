@@ -241,8 +241,12 @@ abstract class Block<T extends PropsType = PropsType> {
 
 	dispatchComponentDidMount(useForCurrent: boolean = true) {
 		if(useForCurrent) this._eventBus().emit(Block.EVENTS.FLOW_CDM);
+		this.storePropsUpdated();
+		this.propsUpdated();
 		Object.values(this._children).forEach((el) => {
 			el.dispatchComponentDidMount();
+			el.storePropsUpdated();
+			el.propsUpdated();
 		});
 	}
 
@@ -376,7 +380,6 @@ abstract class Block<T extends PropsType = PropsType> {
 	show() {
 		const el = this.getContent();
 		if (el) el.style.display = 'block';
-
 	}
 
 	hide() {

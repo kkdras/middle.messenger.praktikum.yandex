@@ -68,7 +68,7 @@ class HTTPTransport {
 	};
 
 	async delete<T = unknown>(url: string, options: OptionsType = {}) {
-		this.request<T>(
+		return this.request<T>(
 			this.basePath + url,
 			{
 				...options,

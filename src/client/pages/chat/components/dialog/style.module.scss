@@ -1,0 +1,40 @@
+.dialog {
+	display: flex;
+	flex-direction: column;
+	min-width: 100%;
+	height: 100%;
+
+
+	&__body {
+		order: 1;
+		overflow-y: auto;
+		padding: 15px;
+		overflow-y: auto;
+		margin-top: auto;
+
+		& > div {
+			display: flex;
+			margin-bottom: 20px;
+		}
+	}
+
+	&__form {
+		order: 2;
+		padding: 10px;
+		flex: 0 0 56px;
+		display: flex;
+		align-items: center;
+	}
+
+	&__field {
+		flex: 1 1 auto;
+		height: 38px;
+		font-size: 16px;
+		padding: 0 10px;
+		background-color: #efefef;
+		border-radius: 10px;
+		margin: 0 10px;
+		border: none;
+		outline: none;
+	}
+}

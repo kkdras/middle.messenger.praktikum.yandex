@@ -1,20 +1,25 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
 import { Block } from '../../packages';
+import { classNames } from '../../utils';
 
 type PropsType = {
-	children: Block | Block[]
-}
+	children: Block | Block[];
+	blackout?: boolean;
+};
 
 class Card extends Block {
-	constructor(args: PropsType) {
+	constructor(props: PropsType) {
 		super('div', {
 			class: {
-				card: style.card,
+				card: classNames(
+					style.card,
+					{ [style.blackout]: !!props.blackout }
+				),
 				cardWrapper: style.card__wrapper,
 				cardBody: style.card__body
 			},
-			...args
+			...props
 		});
 	}
 

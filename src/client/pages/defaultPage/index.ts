@@ -10,7 +10,7 @@ const links: LinkPropsType[] = [
 	{ label: 'external error page', href: '/externalError' },
 	{ label: 'logIn page', href: '/login' },
 	{ label: 'registration page', href: '/registration' },
-	{ label: 'chat', href: '/chat' },
+	{ label: 'chat', href: '/messenger' },
 	{ label: 'profile', href: '/profile' }
 ];
 
@@ -38,7 +38,7 @@ const page = new RegistrationPage({
 	children: links.map((item) => new Link(item))
 });
 
-export default new Container({
+export default () => new Container({
 	children: new Card({
 		children: page
 	})

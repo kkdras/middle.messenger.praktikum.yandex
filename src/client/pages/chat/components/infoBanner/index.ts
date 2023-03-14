@@ -1,17 +1,20 @@
 import tmp from 'bundle-text:./index.hbs';
+import { BlockEvents } from '../../../../packages/Block';
 import { Block } from '../../../../packages';
 import * as style from './style.module.scss';
 
-export type UserBannerPropsType = {
-	avatar: string,
-	userName: string,
-	userMessage: string,
-	messageTime: string,
-	// counter?: number,
-}
+export type InfoBannerProps = {
+	events?: BlockEvents;
+	avatar: string;
+	message: string;
+	counter: string;
+	title: string;
+	time: string,
+	button?: Block
+};
 
-export class UserBanner extends Block {
-	constructor(args: UserBannerPropsType) {
+export class InfoBanner extends Block {
+	constructor(props: InfoBannerProps) {
 		super('div', {
 			class: {
 				container: style.userBanner,
@@ -20,9 +23,11 @@ export class UserBanner extends Block {
 				userName: style.userBanner__userName,
 				message: style.userBanner__message,
 				subContent: style.userBanner__subContent,
-				messageTime: style.userBanner__messageTime
+				messageTime: style.userBanner__messageTime,
+				counter: style.userBanner__counter
 			},
-			...args
+			...(props as Record<string, unknown>)
+
 		});
 	}
 

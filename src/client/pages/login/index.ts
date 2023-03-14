@@ -1,8 +1,7 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
-import { Block } from '../../packages';
+import { Block, getItem, Router } from '../../packages';
 import {
-	handleSubmit,
 	loginError,
 	LOGIN_PATTERN,
 	PASSWORD_PATTERN,
@@ -11,6 +10,7 @@ import {
 import {
 	Button, ButtonPropsType, Card, Container, TextField, TextFieldProps
 } from '../../ui';
+import { handleAccDoesExist, handleSignIn } from './utils';
 
 const fields: TextFieldProps[] = [
 	{
@@ -35,12 +35,14 @@ const fields: TextFieldProps[] = [
 
 const buttons: ButtonPropsType[] = [
 	{ children: 'Авторизоваться', classes: style.form__logInButton, type: 'submit' },
-	{ children: 'Нет аккаунта?', type: 'outline' }
+	{ children: 'Нет аккаунта?', type: 'outline', events: { click: handleAccDoesExist } }
 ];
 
 type PropsType = {
 	children: string | Block | Block[]
 }
+
+const router = new Router();
 
 class LoginPage extends Block {
 	constructor(args: PropsType) {
@@ -51,9 +53,14 @@ class LoginPage extends Block {
 			},
 			...args,
 			events: {
-				submit: handleSubmit
+				submit: handleSignIn
 			}
 		});
+	}
+
+	componentDidMount() {
+		const isActiveSession = getItem('session');
+		if (isActiveSession) router.go('/profile');
 	}
 
 	render(): DocumentFragment {
@@ -68,7 +75,7 @@ const CurrentPage = new LoginPage({
 	]
 });
 
-export default new Container({
+export default () => new Container({
 	children: new Card({
 		children: CurrentPage
 	})

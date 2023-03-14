@@ -14,21 +14,37 @@ export type InputPropsType = {
 	minLength?: number,
 	maxLength?: number,
 	required?: boolean,
-	errorMessage: string
+	errorMessage: string,
+	defaultValue: string,
 }
-
 export class InputClass extends Block {
-	constructor({
-		classes = [],
-		type = 'text',
-		placeholder = '',
-		pattern = '.*',
-		required = true,
-		minLength = 0,
-		maxLength = 255,
-		id,
-		...args
-	}: InputPropsType) {
+	input: Block;
+	constructor(props: InputPropsType) {
+		const {
+			classes = [],
+			type = 'text',
+			placeholder = '',
+			pattern = '.*',
+			required = true,
+			minLength = 0,
+			maxLength = 255,
+			defaultValue,
+			id
+		} = props;
+
+		const input = new BaseInput({
+			classes: styles.inputContainer__input,
+			events: BaseInputHandlers,
+			maxLength,
+			id,
+			minLength,
+			pattern,
+			placeholder,
+			required,
+			type,
+			defaultValue
+		});
+
 		super('div', {
 			class: {
 				inputContainer: classNames(styles.inputContainer, classes),
@@ -36,30 +52,29 @@ export class InputClass extends Block {
 				errorContainer: styles.inputContainer__errorContainer,
 				errorBody: styles.inputContainer__errorBody
 			},
-			children: new BaseInput({
-				classes: styles.inputContainer__input,
-				events: BaseInputHandlers,
-				maxLength,
-				id,
-				minLength,
-				pattern,
-				placeholder,
-				required,
-				type
-			}),
-			...args
+			children: input,
+			...props
+		});
+		this.input = input;
+	}
+
+	override propsUpdated() {
+		const { defaultValue } = this.props;
+		this.input.setProps({
+			...this.input._meta.props,
+			defaultValue
 		});
 	}
-	componentDidMount(): void {
-		const target = this._children['children' as keyof typeof this._children];
-		const container = this.getContent()?.firstElementChild;
 
-		target._eventBus().on('invalid', () => {
+	componentDidMount(): void {
+		this.input._eventBus().on('invalid', () => {
+			const container = this.getContent()?.firstElementChild;
 			if (!container) return;
 			container.classList.add('invalid');
 		});
 
-		target._eventBus().on('valid', () => {
+		this.input._eventBus().on('valid', () => {
+			const container = this.getContent()?.firstElementChild;
 			if (!container) return;
 			container.classList.remove('invalid');
 		});

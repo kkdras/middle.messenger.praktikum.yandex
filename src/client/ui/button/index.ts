@@ -8,12 +8,14 @@ export type ButtonPropsType = {
 	classes?: string[] | string,
 	viewType?: 'outline',
 	type?: HTMLButtonElement['type'],
+	events?: Record<string, (...args: any[])=> void>
 }
 
 class Button extends Block {
 	constructor({
 		type = 'button',
 		viewType,
+		events = {},
 		...args
 	}: ButtonPropsType) {
 		super('div', {
@@ -23,6 +25,10 @@ class Button extends Block {
 					{ [style.button_outlined]: viewType === 'outline' },
 					args.classes || []
 				)
+			},
+			events: {
+				...events,
+				listenOnChildOfTreePosition: 1
 			},
 			type,
 			...args

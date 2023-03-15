@@ -8,7 +8,9 @@ export const EMAIL_PATTERN = '^[-.\\w]+@([\\w-]+\\.)+[\\w-]+$';
 
 export const PHONE_PATTERN = '^\\+?\\d{10,15}$';
 
-export const PASSWORD_PATTERN = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$';
+export const PASSWORD_PATTERN = '^(?=^.{8,40}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$';
+
+export const DISPLAY_NAME_PATTERN = '[A-zА-яЁё0-9-_]+';
 
 export const nameError = 'Первая буква должна быть заглавной, только буквы';
 
@@ -23,6 +25,8 @@ export const phoneError = 'От 10 до 15 символов, цыфры, мож�
 export const requiredError = 'Это поле обязательно к заполнению';
 
 export const chatNameError = 'Поле обязательно, от 4 до 40 символов';
+
+export const displayNameError = 'Буквы, цыфры, дефис, нижнее подчеркивание';
 
 const baseEffect = (e: Event) => {
 	(e.target as HTMLInputElement).checkValidity();

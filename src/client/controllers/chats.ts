@@ -51,13 +51,15 @@ class ChatsControllerClass {
 	@AsyncCatch()
 	public async deleteUser(data: IChatUserBody) {
 		await chatApi.deleteUser(data);
-		await this.getChatUsers(data.chatId);
 
 		const authUser = Store.getState().user.id;
 		if (data.users.some((userId) => userId === authUser)) {
 			this.closeChat();
 			this.getChats();
+			return;
 		}
+
+		await this.getChatUsers(data.chatId);
 	}
 
 	@WithLoader

@@ -96,18 +96,56 @@ export const WithLoader = (
 	return descriptor;
 };
 
+export function checkIsMessageType(
+	maybeMessage: unknown
+): maybeMessage is IMessage | IMessage[] {
+	const isRightMessageArr: boolean = Array.isArray(maybeMessage)
+		&& !!maybeMessage.length
+		&& maybeMessage.every((message) => message.type === 'message');
+
+	const isRightMessage: boolean = (maybeMessage as IMessage).type === 'message';
+
+	return isRightMessage || isRightMessageArr;
+}
+
+type CommonFunctionDescriptor = TypedPropertyDescriptor<(...args: any[])=> any>
+
 export const AsyncCatch = (
 	{ nextThrow }: { nextThrow: boolean } = { nextThrow: false }
 ) => {
 	return (
 		_target: object,
 		_propertyKey: string,
-		descriptor: TypedPropertyDescriptor<(...args: any[])=> any>
-	): TypedPropertyDescriptor<(...args: any[])=> any> => {
+		descriptor: CommonFunctionDescriptor
+	): CommonFunctionDescriptor => {
 		const oldValue = descriptor.value;
 		descriptor.value = async function (...args: any[]) {
 			try {
 				const res = await oldValue!.apply(this, args);
+				return res;
+			} catch(e) {
+				errorHandler(e as Error);
+				if (nextThrow) throw e;
+			}
+		};
+
+		return descriptor;
+	};
+};
+
+export const SyncCatch = (
+	{ nextThrow }: { nextThrow: boolean } = { nextThrow: false }
+) => {
+	return (
+		_target: object,
+		_propertyKey: string,
+		descriptor: CommonFunctionDescriptor
+	) => {
+		const oldValue = descriptor.value;
+
+		descriptor.value = function (...args: any[]) {
+			try {
+				const res = oldValue!.apply(this, args);
 				return res;
 			} catch(e) {
 				errorHandler(e as Error);

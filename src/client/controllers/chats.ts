@@ -3,21 +3,23 @@ import {
 	addLoader,
 	assertsAllSettledPromise,
 	AsyncCatch,
+	checkIsMessageType,
+	SyncCatch,
 	throwError,
 	WithLoader
 } from './utils';
-import { Store } from '../store';
+import { defaultChat, Store } from '../store';
 import { ChatsApi } from '../api';
 
 const chatApi = new ChatsApi();
 
 const handleReceiveMessage = (message: unknown) => {
-	const newMessage = message as IMessage | IMessage[];
+	if (!checkIsMessageType(message)) return;
+
 	const { messages } = Store.getState().chats.currentChat;
-	if (!Array.isArray(message) && (newMessage as IMessage).type !== 'message') return;
-	Store.setState('chats.currentChat.messages', messages.concat(
-		Array.isArray(message) ? message.reverse() : [message]
-	));
+
+	const updatedMessages = messages.concat(Array.isArray(message) ? message.reverse() : [message]);
+	Store.setState('chats.currentChat.messages', updatedMessages);
 };
 
 class ChatsControllerClass {
@@ -70,7 +72,6 @@ class ChatsControllerClass {
 		return chatUsers;
 	}
 
-	//! it's necessary to remove loader after res or rej
 	@WithLoader
 	@AsyncCatch({ nextThrow: true })
 	private async createChatToken(id: number) {
@@ -81,15 +82,13 @@ class ChatsControllerClass {
 	}
 
 	public closeChat() {
-		Store.setState('chats.currentChat.id', 0);
-		Store.setState('chats.currentChat.users', []);
-		Store.setState('chats.currentChat.token', '');
-		Store.setState('chats.currentChat.messages', []);
+		Store.setState('chats.currentChat', defaultChat.currentChat);
 		Store.setState('chats.showChat', false);
 		this.ws?.closeConnection();
 		this.ws = null;
 	}
 
+	@SyncCatch()
 	public sendMessage(message: string) {
 		if (this.ws) {
 			this.ws.sendData({

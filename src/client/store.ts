@@ -1,6 +1,18 @@
 import { Connector, ConfigureStore, removeItem } from './packages';
 import { deepClone, logger } from './utils';
 
+export const defaultChat = {
+	list: [] as IChat[],
+	showChat: false,
+	currentChat: {
+		id: 0,
+		users: [] as IProfileData[],
+		token: '',
+		messages: [] as IMessage[]
+	},
+	searchUsers: [] as IProfileData[]
+};
+
 export const defaultStore = {
 	app: {
 		loader: 0,
@@ -18,17 +30,7 @@ export const defaultStore = {
 		email: '',
 		phone: ''
 	},
-	chats: {
-		list: [] as IChat[],
-		showChat: false,
-		currentChat: {
-			id: 0,
-			users: [] as IProfileData[],
-			token: '',
-			messages: [] as IMessage[]
-		},
-		searchUsers: [] as IProfileData[]
-	}
+	chats: defaultChat
 };
 
 export const Store = new ConfigureStore(deepClone(defaultStore));

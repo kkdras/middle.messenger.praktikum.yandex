@@ -2,7 +2,6 @@
 
 import { Block } from '../packages';
 
-// eslint-disable-next-line import/prefer-default-export
 export const set = <T extends Record<string, unknown>>(
 	store: T,
 	path: string,
@@ -34,7 +33,6 @@ export function isEqual(a: object, b: object): boolean {
 	const bEntries = Object.keys(b);
 	if (aEntries.length !== bEntries.length) return false;
 
-	// eslint-disable-next-line no-plusplus
 	for (let i = 0; i < aEntries.length; i++) {
 		const key = aEntries[i];
 		const elA = a[key as keyof typeof a];
@@ -53,27 +51,36 @@ type ObjectTarget = { [key: string]: unknown }
 
 type TargetType = ArrTarget | ObjectTarget;
 
-export const deepClone = <T extends TargetType>(
+export const deepClone = <T extends unknown>(
 	target: T,
-	limitation?: (arg: ObjectTarget)=> boolean
+	limitation?: (arg: ObjectTarget | ArrTarget)=> boolean
 ): T => {
 	function isObjectOrArray(item: unknown): item is TargetType {
 		return (typeof item === 'object' || Array.isArray(item)) && !!item;
 	}
 
-	const handleObject = () => Object.entries(target)
+	const handleObject = (obj: ObjectTarget) => Object.entries(obj)
 		.reduce((acc, [key, value]) => {
 			acc[key] = isObjectOrArray(value)
-				&& (!limitation || (!Array.isArray(value) && limitation(value)))
+				&& (!limitation || Array.isArray(value) || limitation(value))
 				? deepClone(value, limitation)
 				: value;
 			return acc;
-		}, {} as ObjectTarget) as T;
+		}, {} as ObjectTarget);
 
-	const handleArray =	(arr: unknown[]) => arr
-		.map((item) => (isObjectOrArray(item) ? deepClone(item, limitation) : item)) as T;
+	const handleArray = (arr: ArrTarget) => arr.map((item) => {
+		return isObjectOrArray(item) && (!limitation || limitation(item))
+			? deepClone(item, limitation)
+			: item;
+	});
 
-	return Array.isArray(target) ? handleArray(target) : handleObject();
+	let clone = target;
+
+	if (isObjectOrArray(target)) {
+		clone = (Array.isArray(target) ? handleArray(target) : handleObject(target)) as T;
+	}
+
+	return clone;
 };
 
 export const debounceInvokeFunction = (callback: ()=> void, delay = 0) => {

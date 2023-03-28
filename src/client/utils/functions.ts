@@ -105,3 +105,7 @@ export const logger = (...logs: unknown[]) => {
 		console.log(...logs);
 	};
 };
+
+export const dropLast = <T extends unknown>(count: number, arr: T[]): T[] => {
+	return arr.slice(0, arr.length - count);
+};

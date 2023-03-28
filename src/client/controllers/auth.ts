@@ -34,7 +34,7 @@ class AuthControllerClass {
 			Store.setState('user', userData);
 			removeLoader();
 		} catch (e) {
-			router.go('/login');
+			router.go('/login', true);
 			throw e;
 		}
 	}

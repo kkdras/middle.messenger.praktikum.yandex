@@ -60,7 +60,7 @@ class LoginPage extends Block {
 
 	componentDidMount() {
 		const isActiveSession = getItem('session');
-		if (isActiveSession) router.go('/profile');
+		if (isActiveSession) router.go('/profile', true);
 	}
 
 	render(): DocumentFragment {

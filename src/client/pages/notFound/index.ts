@@ -4,7 +4,7 @@ import { Error } from '../../components';
 const CurrentPage = new Error({
 	errorTitle: '404',
 	errorContent: 'Не туда попали',
-	linkLabel: 'Назад к чатам',
+	linkLabel: 'Перейти на главную страницу',
 	href: '/'
 });
 

@@ -6,44 +6,70 @@ import {
 import * as style from './style.module.scss';
 import { Block, getItem, Router } from '../../packages';
 import { buttons, fields } from './utils';
+import { Store, withPasswordError } from '../../store';
 
 type PropsType = {
-	children: Block[]
-}
+	fields: Block[];
+	buttons: Block[];
+	passwordError: boolean;
+};
 
-export function handleSubmit(e: Event) {
+export function handleSubmit(this: Block, e: Event) {
 	e.preventDefault();
-	const form = (e.target as HTMLFormElement);
+	const form = e.target as HTMLFormElement;
 	const isValid = form.checkValidity();
+
 	if (isValid) {
 		const data = Object.fromEntries(
 			new FormData(e.target as HTMLFormElement)
-		);
+		) as SignUp.body & { passwordExamination: string };
 
-		AuthController.signUp(data as SignUp.body);
+		if (data.password !== data.passwordExamination) {
+			Store.setState('app.passwordError', true);
+			return;
+		}
+
+		AuthController.signUp({
+			...data,
+			phone: data.phone.replace('+', '')
+		});
 		form.reset();
 	}
 }
 
 const router = new Router();
-class RegistrationPage extends Block {
-	constructor(args: PropsType) {
+class _RegistrationPage extends Block {
+	constructor(props: PropsType) {
 		super('div', {
 			class: {
 				form: style.form,
-				formTitle: style.form__title
+				formTitle: style.form__title,
+				passwordError: !props.passwordError ? style.hidden : style.passwordError
 			},
-			...args,
 			events: {
 				submit: handleSubmit
-			}
+			},
+			...props
 		});
 	}
 
-	componentDidMount() {
-		const isActiveSession = !!Number(getItem('session'));
+	override componentDidMount() {
+		if (getItem('session')) router.go('/profile', true);
+	}
 
-		if (isActiveSession) router.go('/profile', true);
+	override storePropsUpdated() {
+		const newProps = this._meta.props as {
+			class: Record<string, string>;
+		} & PropsType;
+		this.setProps({
+			...newProps,
+			class: {
+				...newProps.class,
+				passwordError: !newProps.passwordError
+					? style.hidden
+					: style.passwordError
+			}
+		});
 	}
 
 	render(): DocumentFragment {
@@ -51,13 +77,14 @@ class RegistrationPage extends Block {
 	}
 }
 
+const RegistrationPage = withPasswordError(_RegistrationPage);
+
 const Page = new RegistrationPage({
-	children: [
-		...fields.map((item) => new TextField(item)),
-		...buttons.map((item) => new Button(item))
-	]
+	fields: fields.map((item) => new TextField(item)),
+	buttons: buttons.map((item) => new Button(item))
 });
 
-export default () => new Container({
-	children: new Card({ children: Page })
-});
+export default () =>
+	new Container({
+		children: new Card({ children: Page })
+	});

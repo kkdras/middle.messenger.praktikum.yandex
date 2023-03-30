@@ -1,6 +1,6 @@
 import { Block } from '../packages';
 
-export const NAME_PATTERN = '^[А-ЯЁA-Z][а-яёa-z-]*$';
+export const NAME_PATTERN = '^[А-ЯЁA-Z][а-яёa-zА-ЯЁA-Z-]*$';
 
 export const LOGIN_PATTERN = '^(?:[0-9]+[A-z_-]|[A-z_-]+[0-9]|[A-z_-]+)[A-z0-9-_]*$';
 
@@ -10,7 +10,7 @@ export const PHONE_PATTERN = '^\\+?\\d{10,15}$';
 
 export const PASSWORD_PATTERN = '^(?=^.{8,40}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$';
 
-export const DISPLAY_NAME_PATTERN = '[A-zА-яЁё0-9-_]+';
+export const DISPLAY_NAME_PATTERN = '[A-zА-яЁё0-9-_ ]+';
 
 export const nameError = 'Первая буква должна быть заглавной, только буквы';
 
@@ -47,22 +47,30 @@ export type InputHandlers = {
 	[eventName in keyof GlobalEventHandlers as ExcludePrefix<eventName>]?:
 	GlobalEventHandlers[eventName]
 }
+export class BaseInputHandlers {
+	touched = false;
 
-export const BaseInputHandlers: InputHandlers = {
-	input(e) {
+	input = (e: Event) => {
+		this.touched = true;
 		const blockInstance = ((e.target as any).__BlockInstance || null) as Block | null;
 		blockInstance?._eventBus()?.emit?.('valid');
-	},
-	focus(e: Event) {
+	};
+
+	focus = (e: Event) => {
+		if (!this.touched) return;
 		(e.target as HTMLInputElement)?.checkValidity();
-	},
-	blur(e: Event) {
+	};
+
+	blur = (e: Event) => {
+		this.touched = true;
 		(e.target as HTMLInputElement)?.checkValidity();
-	},
-	invalid(e) {
+	};
+
+	invalid = (e: Event) => {
+		this.touched = true;
 		const blockInstance = ((e.target as any).__BlockInstance || null) as Block | null;
 		blockInstance?._eventBus()?.emit('invalid');
-	}
+	};
 };
 
 // по другому просто никак

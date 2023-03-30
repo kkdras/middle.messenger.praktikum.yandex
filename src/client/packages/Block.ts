@@ -14,7 +14,7 @@ type ExcludePrefix<T extends string> = string extends T
 
 export type BlockEvents = {
 	[eventName in keyof GlobalEventHandlers as ExcludePrefix<eventName>]?:
-	GlobalEventHandlers[eventName]
+	(...args: Parameters<NonNullable<GlobalEventHandlers[eventName]>>)=> void
 }
 
 type PropsType = Record<string, unknown> & {
@@ -316,7 +316,7 @@ abstract class Block<T extends PropsType = PropsType> {
 	_makePropsProxy(userProps: T) {
 		// eslint-disable-next-line @typescript-eslint/no-use-before-define
 		const props = deepClone(userProps, limitDeepCopy);
-		let timeoutUpdate: null | number = null;
+		let timeoutUpdate: null | NodeJS.Timeout = null;
 		const emitCDU = () => {
 			this._eventBus().emit(
 				Block.EVENTS.FLOW_CDU,
@@ -327,9 +327,9 @@ abstract class Block<T extends PropsType = PropsType> {
 		};
 
 		const debounceWrapper = () => {
-			// eslint-disable-next-line @typescript-eslint/no-use-before-define
-			if (!timeoutUpdate) timeoutUpdate = debounceInvokeFunction(emitCDU);
-
+			if (!timeoutUpdate) {
+				timeoutUpdate = debounceInvokeFunction(emitCDU);
+			}
 		};
 
 		const self = this;

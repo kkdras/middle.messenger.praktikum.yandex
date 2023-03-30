@@ -58,9 +58,8 @@ class LoginPage extends Block {
 		});
 	}
 
-	componentDidMount() {
-		const isActiveSession = getItem('session');
-		if (isActiveSession) router.go('/profile', true);
+	override componentDidMount() {
+		if (getItem('session')) router.go('/profile', true);
 	}
 
 	render(): DocumentFragment {

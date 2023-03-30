@@ -16,7 +16,10 @@ export const handleUpdateProfile = (e: Event) => {
 			new FormData(e.target as HTMLFormElement)
 		) as IBaseProfileData;
 
-		UserController.updateProfileData(newProfileData);
+		UserController.updateProfileData({
+			...newProfileData,
+			phone: newProfileData.phone.replace('+', '')
+		});
 
 		form.reset();
 	}
@@ -32,9 +35,7 @@ export const handleChangeAvatar = (e: Event) => {
 
 	const formData = new FormData();
 	const avatarInput = document.querySelector('input[name="avatar"]') as HTMLInputElement;
-	const image = avatarInput?.files?.item(0);
-
-	if (!image) return;
+	const image = avatarInput?.files?.item(0) || '';
 
 	formData.append('avatar', image);
 	UserController.changeAvatar(formData);

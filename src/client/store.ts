@@ -18,7 +18,8 @@ export const defaultStore = {
 		loader: 0,
 		passwordMode: false,
 		showNewChatPopUp: false,
-		showAddUserPopUp: false
+		showAddUserPopUp: false,
+		passwordError: false
 	},
 	user: {
 		id: 0,
@@ -39,9 +40,9 @@ export type StateType = typeof defaultStore;
 
 export const errorHandler = (e: Error) => {
 	if (process.env.NODE_ENV === 'production') {
-		const message = e?.message || (e as unknown as IResponse<string>).json || '';
+		const message = e?.message || 'An error has occurred';
 		// eslint-disable-next-line no-alert
-		alert(`An error has occurred ${message}`);
+		alert(message);
 	} else {
 		logger(e);
 	}
@@ -105,3 +106,8 @@ export const addUserPopUpSelector = (store: StateType) => ({
 	chatId: store.chats.currentChat.id
 });
 export const withAddUserPopUpProps = connector.connect(addUserPopUpSelector);
+
+export const passwordErrorSelector = (store: StateType) => ({
+	passwordError: store.app.passwordError
+});
+export const withPasswordError = connector.connect(passwordErrorSelector);

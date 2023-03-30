@@ -38,9 +38,13 @@ export const checkValidNewPassword = (data: object) => {
 };
 
 export const checkValidAvatar = (data: unknown) => {
-	const valid = data instanceof FormData && data.has('avatar');
+	const valid = data instanceof FormData && data.has('avatar') && !!data.get('avatar');
 
 	if (!valid) throw new Error('avatar is incorrect');
+};
+
+export function isDataResponseObject(data: unknown): data is IResponse<unknown> {
+	return !!data && typeof data === 'object' && 'json' in data && 'status' in data;
 };
 
 export const checkValidSignInData = (data: object) => {
@@ -65,16 +69,15 @@ export const throwError = (message: string): never => {
 };
 
 export function assertsAllSettledPromise<T>(
-	promise: PromiseSettledResult<T>,
-	altMessage: string
-): asserts promise is PromiseFulfilledResult<T> {
-	if (promise.status === 'rejected') {
-		const reason = promise.reason as unknown;
+	settledPromise: PromiseSettledResult<T>
+): asserts settledPromise is PromiseFulfilledResult<T> {
+	if (settledPromise.status === 'rejected') {
+		const reason = settledPromise.reason as unknown;
 		if (reason && typeof reason === 'object' && reason instanceof Error) {
 			throw reason;
 		}
 
-		throwError(typeof reason === 'string' ? reason : altMessage);
+		throw reason;
 	}
 }
 

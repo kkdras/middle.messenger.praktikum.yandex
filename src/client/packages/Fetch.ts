@@ -27,11 +27,9 @@ type OptionsType = {
 	parseResult?: boolean;
 };
 
-const { BASE_PATH } = process.env;
+type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
-const defaultHeaders = {
-	'Content-type': 'application/json; charset=utf-8'
-} as const;
+const { BASE_PATH } = process.env;
 
 class HTTPTransport {
 	readonly basePath: string;
@@ -46,7 +44,7 @@ class HTTPTransport {
 			{ ...options, method: METHOD.GET },
 			options.timeout
 		);
-	} ;
+	}
 
 	async put<T = unknown>(url: string, options: OptionsType = {}) {
 		return this.request<T>(
@@ -65,7 +63,7 @@ class HTTPTransport {
 			{ ...options, method: METHOD.POST },
 			options.timeout
 		);
-	};
+	}
 
 	async delete<T = unknown>(url: string, options: OptionsType = {}) {
 		return this.request<T>(
@@ -76,21 +74,29 @@ class HTTPTransport {
 			},
 			options.timeout
 		);
-	};
+	}
 
 	async request<T>(url: string, options: OptionsType, timeout = 5000) {
 		const {
-			headers = defaultHeaders, data, method = METHOD.GET, parseResult = true
+			headers = {
+				'Content-type': 'application/json; charset=utf-8'
+			} as Writeable<
+			NonNullable<OptionsType['headers']>
+			>,
+			data,
+			method = METHOD.GET,
+			parseResult = true
 		} = options;
 
-		const isFormData = data instanceof FormData;
+		const isFormData = (data
+			&& typeof data === 'object'
+			&& Object.getPrototypeOf(data) === FormData.prototype);
 
-		// eslint-disable-next-line curly
 		if (isFormData) {
 			delete headers['Content-type'];
 		}
 
-		const rawData = isFormData ? data : JSON.stringify(data);
+		const rawData = isFormData ? (data as FormData) : JSON.stringify(data);
 
 		return new Promise<IResponse<T>>((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
@@ -129,7 +135,7 @@ class HTTPTransport {
 			if (method === METHOD.GET || !data) xhr.send();
 			else xhr.send(rawData);
 		});
-	};
+	}
 }
 
 export default HTTPTransport;

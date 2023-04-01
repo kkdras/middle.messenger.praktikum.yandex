@@ -12,13 +12,13 @@ export const handleUpdateProfile = (e: Event) => {
 	const form = (e.target as HTMLFormElement);
 	const isValid = form.checkValidity();
 	if (isValid) {
-		const newProfileData = Object.fromEntries(
+		const { avatar, phone, ...rest } = Object.fromEntries(
 			new FormData(e.target as HTMLFormElement)
 		) as IBaseProfileData;
 
 		UserController.updateProfileData({
-			...newProfileData,
-			phone: newProfileData.phone.replace('+', '')
+			...rest,
+			phone: phone.replace('+', '')
 		});
 
 		form.reset();

@@ -8,7 +8,7 @@ export const EMAIL_PATTERN = '^[-.\\w]+@([\\w-]+\\.)+[\\w-]+$';
 
 export const PHONE_PATTERN = '^\\+?\\d{10,15}$';
 
-export const PASSWORD_PATTERN = '^(?=^.{8,40}$)(?=.*\\d)(?=.*[A-Z]).*$';
+export const PASSWORD_PATTERN = '^(?=^.{8,40}$)(?=.*\\d)(?=.*[A-ZA-ЯЁ]).*$';
 
 export const DISPLAY_NAME_PATTERN = '[A-zА-яЁё0-9-_ ]+';
 

@@ -1,0 +1,27 @@
+@import url("./../../../../styles/style.scss");
+.form {
+	width: 100%;
+	height: 100%;
+
+	&__title {
+		font-size: 20px;
+		padding-bottom: 20px;
+		text-align: center;
+	}
+
+	&__logInButton {
+		margin-bottom: 10px;
+		margin-top: 60px;
+	}
+
+	border-bottom: 1px solid #eaeaea;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+.searchResults {
+	max-height: 300px;
+	overflow-y: auto;
+	font-size: 16px;
+	color: var(--second-color);
+}

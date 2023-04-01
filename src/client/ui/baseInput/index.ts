@@ -1,8 +1,7 @@
 import tmp from 'bundle-text:./index.hbs';
-import { Block } from '../../packages';
-import { InputHandlers } from '../../utils';
+import { Block, BlockEvents } from '../../packages';
 
-export type TextFieldProps = {
+export type DefaultInputProps = {
 	type?: HTMLInputElement['type'],
 	id: string,
 	pattern?: string,
@@ -11,7 +10,8 @@ export type TextFieldProps = {
 	required?: boolean,
 	placeholder?: string,
 	classes?: string,
-	events: InputHandlers,
+	events: BlockEvents,
+	defaultValue: string
 }
 
 class DefaultInput extends Block {
@@ -25,7 +25,7 @@ class DefaultInput extends Block {
 		classes = '',
 		events = {},
 		...args
-	}: TextFieldProps) {
+	}: DefaultInputProps) {
 		super('div', {
 			class: classes,
 			type,
@@ -35,7 +35,7 @@ class DefaultInput extends Block {
 			required,
 			placeholder,
 			events: {
-				listenOnFirstChildren: true,
+				listenOnChildOfTreePosition: 1,
 				...events
 			},
 			...args

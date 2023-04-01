@@ -1,96 +1,73 @@
 import tmp from 'bundle-text:./index.hbs';
+import { AuthController } from '../../controllers/auth';
 import {
-	Card, Container, TextField, TextFieldProps, Button, ButtonPropsType
+	Card, Container, TextField, Button
 } from '../../ui';
 import * as style from './style.module.scss';
-import { Block } from '../../packages';
-
-import {
-	emailError,
-	EMAIL_PATTERN,
-	handleSubmit,
-	loginError,
-	LOGIN_PATTERN,
-	nameError,
-	NAME_PATTERN,
-	passwordError,
-	PASSWORD_PATTERN,
-	phoneError,
-	PHONE_PATTERN
-} from '../../utils/validation';
-
-const fields: TextFieldProps[] = [
-	{
-		label: 'Почта',
-		id: 'email',
-		pattern: EMAIL_PATTERN,
-		errorMessage: emailError
-	},
-	{
-		label: 'Логин',
-		id: 'login',
-		pattern: LOGIN_PATTERN,
-		minLength: 3,
-		maxLength: 20,
-		errorMessage: loginError
-	},
-	{
-		label: 'Имя',
-		id: 'first_name',
-		pattern: NAME_PATTERN,
-		errorMessage: nameError
-	},
-	{
-		label: 'Фамилия',
-		id: 'second_name',
-		pattern: NAME_PATTERN,
-		errorMessage: nameError
-	},
-	{
-		label: 'Телефон',
-		id: 'phone',
-		pattern: PHONE_PATTERN,
-		errorMessage: phoneError
-	},
-	{
-		label: 'Пароль',
-		id: 'password',
-		type: 'password',
-		pattern: PASSWORD_PATTERN,
-		minLength: 8,
-		maxLength: 40,
-		errorMessage: passwordError
-	},
-	{
-		label: 'Пароль (ещё раз)',
-		id: 'passwordExamination',
-		type: 'password',
-		pattern: PASSWORD_PATTERN,
-		minLength: 8,
-		maxLength: 40,
-		errorMessage: passwordError
-	}
-];
-
-const buttons: ButtonPropsType[] = [
-	{ children: 'Зарегистрироваться', classes: style.form__sigInButton, viewType: 'outline' },
-	{ children: 'Войти', type: 'submit' }
-];
+import { Block, getItem, Router } from '../../packages';
+import { buttons, fields } from './utils';
+import { Store, withPasswordError } from '../../store';
 
 type PropsType = {
-	children: Block[]
+	fields: Block[];
+	buttons: Block[];
+	passwordError: boolean;
+};
+
+export function handleSubmit(this: Block, e: Event) {
+	e.preventDefault();
+	const form = e.target as HTMLFormElement;
+	const isValid = form.checkValidity();
+
+	if (isValid) {
+		const data = Object.fromEntries(
+			new FormData(e.target as HTMLFormElement)
+		) as SignUp.body & { passwordExamination: string };
+
+		if (data.password !== data.passwordExamination) {
+			Store.setState('app.passwordError', true);
+			return;
+		}
+
+		AuthController.signUp({
+			...data,
+			phone: data.phone.replace('+', '')
+		});
+		form.reset();
+	}
 }
 
-class RegistrationPage extends Block {
-	constructor(args: PropsType) {
+const router = new Router();
+class _RegistrationPage extends Block {
+	constructor(props: PropsType) {
 		super('div', {
 			class: {
 				form: style.form,
-				formTitle: style.form__title
+				formTitle: style.form__title,
+				passwordError: !props.passwordError ? style.hidden : style.passwordError
 			},
-			...args,
 			events: {
 				submit: handleSubmit
+			},
+			...props
+		});
+	}
+
+	override componentDidMount() {
+		if (getItem('session')) router.go('/profile', true);
+	}
+
+	override storePropsUpdated() {
+		const newProps = this._meta.props as {
+			class: Record<string, string>;
+		} & PropsType;
+		this.setProps({
+			...newProps,
+			class: {
+				...newProps.class,
+				passwordError: !newProps.passwordError
+					? style.hidden
+					: style.passwordError
 			}
 		});
 	}
@@ -100,15 +77,14 @@ class RegistrationPage extends Block {
 	}
 }
 
+const RegistrationPage = withPasswordError(_RegistrationPage);
+
 const Page = new RegistrationPage({
-	children: [
-		...fields.map((item) => new TextField(item)),
-		...buttons.map((item) => new Button(item))
-	]
+	fields: fields.map((item) => new TextField(item)),
+	buttons: buttons.map((item) => new Button(item))
 });
 
-const containerInstance = new Container({
-	children: new Card({ children: Page })
-});
-
-export default containerInstance;
+export default () =>
+	new Container({
+		children: new Card({ children: Page })
+	});

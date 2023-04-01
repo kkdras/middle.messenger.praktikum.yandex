@@ -4,12 +4,10 @@ import { Error } from '../../components';
 const CurrentPage = new Error({
 	errorTitle: '500',
 	errorContent: 'Мы уже фиксим',
-	errorLink: 'Назад к чатам',
+	linkLabel: 'Перейти на главную страницу',
 	href: '/'
 });
 
-const containerInstance = new Container({
+export default () => new Container({
 	children: CurrentPage
 });
-
-export default containerInstance;

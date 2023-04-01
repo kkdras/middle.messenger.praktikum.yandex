@@ -1,25 +1,26 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
-import {
-	BaseInputHandlers, classNames
-} from '../../utils';
-import { Block } from '../../packages';
+import { BaseInputHandlers, classNames } from '../../utils';
+import { Block, BlockEvents } from '../../packages';
 import BaseInput from '../baseInput';
 
 export type TextFieldProps = {
-	type?: HTMLInputElement['type'],
-	error?: boolean,
-	label: string,
-	id: string,
-	pattern?: string,
-	maxLength?: number,
-	minLength?: number,
-	required?: boolean,
-	placeholder?: string,
-	errorMessage: string
-}
+	type?: HTMLInputElement['type'];
+	error?: boolean;
+	label: string;
+	id: string;
+	pattern?: string;
+	maxLength?: number;
+	minLength?: number;
+	required?: boolean;
+	placeholder?: string;
+	errorMessage?: string;
+	defaultValue?: string;
+	events?: BlockEvents;
+};
 
 class TextField extends Block {
+	input: Block;
 	constructor({
 		error,
 		id,
@@ -29,43 +30,47 @@ class TextField extends Block {
 		placeholder,
 		required,
 		type,
+		errorMessage = '',
+		defaultValue = '',
+		events = {},
 		...args
 	}: TextFieldProps) {
+		const input = new BaseInput({
+			id,
+			events: { ...new BaseInputHandlers(), ...events },
+			classes: style.field__input,
+			maxLength,
+			minLength,
+			pattern,
+			placeholder,
+			required,
+			type,
+			defaultValue
+		});
+
 		super('div', {
 			class: {
-				field: classNames(
-					style.field,
-					{ [style.field_error]: error }
-				),
+				field: classNames(style.field, { [style.field_error]: error }),
 				fieldLabel: style.field__label,
 				errorContainer: style.field__errorContainer,
 				errorBody: style.field__errorBody
 			},
-			children: new BaseInput({
-				id,
-				events: BaseInputHandlers,
-				classes: style.field__input,
-				maxLength,
-				minLength,
-				pattern,
-				placeholder,
-				required,
-				type
-			}),
+			children: input,
+			errorMessage,
 			...args
 		});
+		this.input = input;
 	}
 
-	componentDidMount(): void {
-		const target = this._children['children' as keyof typeof this._children];
-		const container = this.getContent()?.firstElementChild;
-
-		target._eventBus().on('invalid', () => {
+	override componentDidMount(): void {
+		this.input._eventBus().on('invalid', () => {
+			const container = this.getContent()?.firstElementChild;
 			if (!container) return;
 			container.classList.add('invalid');
 		});
 
-		target._eventBus().on('valid', () => {
+		this.input._eventBus().on('valid', () => {
+			const container = this.getContent()?.firstElementChild;
 			if (!container) return;
 			container.classList.remove('invalid');
 		});

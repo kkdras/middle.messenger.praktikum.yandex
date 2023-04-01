@@ -1,6 +1,6 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
-import { Block } from '../../../../packages';
+import { Block, createLink } from '../../../../packages';
 
 export type LinkPropsType = {
 	href?: string,
@@ -27,4 +27,4 @@ class Link extends Block {
 	}
 }
 
-export default Link;
+export default createLink(Link, 2);

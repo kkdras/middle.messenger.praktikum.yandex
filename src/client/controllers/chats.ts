@@ -1,6 +1,5 @@
 import { WSController } from './chatSocket';
 import {
-	addLoader,
 	assertsAllSettledPromise,
 	AsyncCatch,
 	checkIsMessageType,
@@ -27,11 +26,10 @@ const handleReceiveMessage = (message: unknown) => {
 class ChatsControllerClass {
 	ws = null as null | WSController;
 
-	@WithLoader
 	@AsyncCatch()
+	@WithLoader
 	public async createChat(data: ICreateChat) {
 		try {
-			addLoader();
 			await chatApi.createChat(data);
 			await this.getChats();
 
@@ -82,8 +80,8 @@ class ChatsControllerClass {
 		}
 	}
 
-	@WithLoader
 	@AsyncCatch({ nextThrow: true })
+	@WithLoader
 	private async getChatUsers(id: number) {
 		try {
 			const chatUsers = await chatApi.getChatUsers(id);
@@ -93,8 +91,8 @@ class ChatsControllerClass {
 		}
 	}
 
-	@WithLoader
 	@AsyncCatch({ nextThrow: true })
+	@WithLoader
 	private async createChatToken(id: number) {
 		try {
 			const { token } = await chatApi.createChatToken(id);

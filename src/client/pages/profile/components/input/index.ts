@@ -34,7 +34,7 @@ export class InputClass extends Block {
 
 		const input = new BaseInput({
 			classes: styles.inputContainer__input,
-			events: BaseInputHandlers,
+			events: new BaseInputHandlers(),
 			maxLength,
 			id,
 			minLength,
@@ -66,7 +66,7 @@ export class InputClass extends Block {
 		});
 	}
 
-	componentDidMount(): void {
+	override componentDidMount(): void {
 		this.input._eventBus().on('invalid', () => {
 			const container = this.getContent()?.firstElementChild;
 			if (!container) return;

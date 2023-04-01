@@ -1,4 +1,5 @@
 import { Router } from '../../packages';
+import { Store } from '../../store';
 import { ButtonPropsType, TextFieldProps } from '../../ui';
 import {
 	emailError,
@@ -13,6 +14,10 @@ import {
 	PHONE_PATTERN
 } from '../../utils/validation';
 import * as style from './style.module.scss';
+
+const onChangePasswordField = () => {
+	Store.setState('app.passwordError', false);
+};
 
 export const fields: TextFieldProps[] = [
 	{
@@ -54,7 +59,10 @@ export const fields: TextFieldProps[] = [
 		pattern: PASSWORD_PATTERN,
 		minLength: 8,
 		maxLength: 40,
-		errorMessage: passwordError
+		errorMessage: passwordError,
+		events: {
+			keyup: onChangePasswordField
+		}
 	},
 	{
 		label: 'Пароль (ещё раз)',
@@ -63,7 +71,10 @@ export const fields: TextFieldProps[] = [
 		pattern: PASSWORD_PATTERN,
 		minLength: 8,
 		maxLength: 40,
-		errorMessage: passwordError
+		errorMessage: passwordError,
+		events: {
+			keyup: onChangePasswordField
+		}
 	}
 ];
 

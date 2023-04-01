@@ -1,4 +1,6 @@
-import { debounceInvokeFunction, logger, set } from '../utils';
+import {
+	debounceInvokeFunction, deepClone, logger, set
+} from '../utils';
 import EventBus from './Event-bus';
 
 type StoreRestrict = Record<string, unknown>;
@@ -23,7 +25,7 @@ class Store<T extends StoreRestrict> extends EventBus {
 	}
 
 	setState(path: string, value: unknown) {
-		set(this._state, path, value);
+		set(this._state, path, deepClone(value));
 		debounceInvokeFunction(this.emit.bind(this, Store.EVENTS.Updated));
 		logger(this._state);
 		return this._state;

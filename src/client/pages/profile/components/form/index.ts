@@ -10,7 +10,9 @@ import {
 	NAME_PATTERN,
 	phoneError,
 	PHONE_PATTERN,
-	requiredError
+	requiredError,
+	DISPLAY_NAME_PATTERN,
+	displayNameError
 } from '../../../../utils/validation';
 import { InputClass, InputPropsType } from '../input';
 import { StateType, withUserData } from '../../../../store';
@@ -55,9 +57,9 @@ const fields: Record<FieldsKeys, InputPropsType & { instance?: InputClass }> = {
 	display_name: {
 		id: 'display_name',
 		label: 'Имя в чате',
-		pattern: '[A-z0-9-_]+',
+		pattern: DISPLAY_NAME_PATTERN,
 		defaultValue: '',
-		errorMessage: 'Буквы, цыфры, дефис, нижнее подчеркивание'
+		errorMessage: displayNameError
 	},
 	phone: {
 		id: 'phone',

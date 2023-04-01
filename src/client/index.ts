@@ -15,10 +15,10 @@ import style from './styles/style.scss';
 const router = new Router();
 
 router
-	.use('/', defaultPage)
+	.use('/', defaultPage, { isDefault: true })
 	.use('/login', loginPage)
 	.use('/externalError', externalError)
-	.use('/notFound', notFound, true)
+	.use('/notFound', notFound, { isNotFound: true })
 	.use('/messenger', chat)
 	.use('/profile', profile)
 	.use('/registration', registrationPage);

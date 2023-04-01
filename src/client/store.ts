@@ -1,12 +1,25 @@
 import { Connector, ConfigureStore, removeItem } from './packages';
 import { deepClone, logger } from './utils';
 
+export const defaultChat = {
+	list: [] as IChat[],
+	showChat: false,
+	currentChat: {
+		id: 0,
+		users: [] as IProfileData[],
+		token: '',
+		messages: [] as IMessage[]
+	},
+	searchUsers: [] as IProfileData[]
+};
+
 export const defaultStore = {
 	app: {
 		loader: 0,
 		passwordMode: false,
 		showNewChatPopUp: false,
-		showAddUserPopUp: false
+		showAddUserPopUp: false,
+		passwordError: false
 	},
 	user: {
 		id: 0,
@@ -18,17 +31,7 @@ export const defaultStore = {
 		email: '',
 		phone: ''
 	},
-	chats: {
-		list: [] as IChat[],
-		showChat: false,
-		currentChat: {
-			id: 0,
-			users: [] as IProfileData[],
-			token: '',
-			messages: [] as IMessage[]
-		},
-		searchUsers: [] as IProfileData[]
-	}
+	chats: defaultChat
 };
 
 export const Store = new ConfigureStore(deepClone(defaultStore));
@@ -37,9 +40,9 @@ export type StateType = typeof defaultStore;
 
 export const errorHandler = (e: Error) => {
 	if (process.env.NODE_ENV === 'production') {
-		const message = e?.message || (e as unknown as IResponse<string>).json || '';
+		const message = e?.message || 'An error has occurred';
 		// eslint-disable-next-line no-alert
-		alert(`An error has occurred ${message}`);
+		alert(message);
 	} else {
 		logger(e);
 	}
@@ -103,3 +106,8 @@ export const addUserPopUpSelector = (store: StateType) => ({
 	chatId: store.chats.currentChat.id
 });
 export const withAddUserPopUpProps = connector.connect(addUserPopUpSelector);
+
+export const passwordErrorSelector = (store: StateType) => ({
+	passwordError: store.app.passwordError
+});
+export const withPasswordError = connector.connect(passwordErrorSelector);

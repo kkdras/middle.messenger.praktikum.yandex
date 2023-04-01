@@ -1,7 +1,9 @@
 import tmp from 'bundle-text:./index.hbs';
 import { debounceInvokeFunction } from '../../utils/functions';
 import * as style from './style.module.scss';
-import { Block, RouterLink } from '../../packages';
+import {
+	Block, getItem, Router, RouterLink
+} from '../../packages';
 import { Button, Loader, TextField } from '../../ui';
 import {
 	handleCreateNewChat,
@@ -9,9 +11,7 @@ import {
 	transformChatProps
 } from './utils';
 import { withChatPageData } from '../../store';
-import {
-	newChatPopUp, InfoBanner, Dialog
-} from './components';
+import { newChatPopUp, InfoBanner, Dialog } from './components';
 import { AuthController, ChatsController } from '../../controllers';
 import { ChatData } from './components/chatData';
 
@@ -24,6 +24,7 @@ type PropsType = {
 	loader: Block;
 };
 
+const router = new Router();
 class ChatPage extends Block {
 	newChatPopUp: Block;
 	listChats: Block[];
@@ -130,6 +131,7 @@ class ChatPage extends Block {
 	}
 
 	override componentDidMount(): void {
+		if (!getItem('session')) router.go('login', true);
 		AuthController.getProfile();
 		ChatsController.getChats();
 	}

@@ -6,11 +6,18 @@ export default class Route {
 
 	render() {
 		if (!this._instance) this._instance = this._constructor();
-		else this._instance.show();
+		else {
+			this._instance.show();
+		}
 	}
 
 	leave() {
-		if (this._instance) this._instance.hide();
+		if (this._instance) {
+			this._instance.hide();
+			const parent = this._instance.getContent()?.parentElement;
+
+			parent?.removeChild(this._instance.getContent() as Node);
+		}
 	}
 
 	getContent() {

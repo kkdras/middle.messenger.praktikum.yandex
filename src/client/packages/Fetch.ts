@@ -31,7 +31,7 @@ type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 const { BASE_PATH } = process.env;
 
-class HTTPTransport {
+export class HTTPTransport {
 	readonly basePath: string;
 	constructor(pathPrefix: string) {
 		this.basePath = BASE_PATH + pathPrefix;
@@ -137,5 +137,3 @@ class HTTPTransport {
 		});
 	}
 }
-
-export default HTTPTransport;

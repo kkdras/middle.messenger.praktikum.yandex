@@ -4,9 +4,11 @@ import {
 	Card, Container, TextField, Button
 } from '../../ui';
 import * as style from './style.module.scss';
-import { Block, getItem, Router } from '../../packages';
 import { buttons, fields } from './utils';
 import { Store, withPasswordError } from '../../store';
+import { Block } from '../../packages/Block';
+import { Router } from '../../packages/Router';
+import { getItem } from '../../packages/Storage';
 
 type PropsType = {
 	fields: Block[];

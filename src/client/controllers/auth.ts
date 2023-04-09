@@ -1,7 +1,6 @@
 import { removeItem, setItem } from '../packages/Storage';
 import { defaultStore, Store } from '../store';
 import { AuthApi } from '../api';
-import { Router } from '../packages';
 import {
 	checkValidSignUpData,
 	checkValidSignInData,
@@ -9,6 +8,7 @@ import {
 	AsyncCatch,
 	isDataResponseObject
 } from './utils';
+import { Router } from '../packages/Router';
 
 const authAPI = new AuthApi();
 const router = new Router();

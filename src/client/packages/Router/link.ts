@@ -1,4 +1,4 @@
-import Block from '../Block';
+import { Block } from '../Block';
 import Router from './Router';
 
 const router = new Router();

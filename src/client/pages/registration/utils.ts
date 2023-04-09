@@ -1,4 +1,4 @@
-import { Router } from '../../packages';
+import { Router } from '../../packages/Router';
 import { Store } from '../../store';
 import { ButtonPropsType, TextFieldProps } from '../../ui';
 import {

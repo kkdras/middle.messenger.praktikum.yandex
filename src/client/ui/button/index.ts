@@ -1,7 +1,7 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
 import { classNames } from '../../utils';
-import { Block } from '../../packages';
+import { Block } from '../../packages/Block';
 
 export type ButtonPropsType = {
 	children: string,

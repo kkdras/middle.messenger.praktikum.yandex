@@ -1,5 +1,5 @@
 import tmp from 'bundle-text:./index.hbs';
-import { Block } from '../../../../packages';
+import { Block } from '../../../../packages/Block';
 import { classNames } from '../../../../utils';
 import * as styles from './style.module.scss';
 

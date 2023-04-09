@@ -1,12 +1,12 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
-import { Block } from '../../../../packages';
 import { Button, ButtonPropsType } from '../button';
 import { PASSWORD_PATTERN, passwordError } from '../../../../utils/validation';
 import { InputClass, InputPropsType } from '../input';
 import { StateType, withUserData } from '../../../../store';
 import avatarImg from '../../../../public/avatar.jpg';
 import { handleChangeProfileData, handleChangePassword } from './utils';
+import { Block } from '../../../../packages/Block';
 
 type FieldsKeys = 'newPassword' | 'oldPassword';
 

@@ -1,8 +1,8 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as styles from './style.module.scss';
-import { Block } from '../../../../packages';
 import { BaseInputHandlers, classNames } from '../../../../utils';
 import { BaseInput } from '../../../../ui';
+import { Block } from '../../../../packages/Block';
 
 export type InputPropsType = {
 	pattern?: string,

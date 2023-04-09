@@ -1,8 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { v4 } from 'uuid';
 import Handlebars from 'handlebars';
-import EventBus, { IEventBus } from './Event-bus';
-import { debounceInvokeFunction, deepClone, limitDeepCopy } from '../utils';
+import { IEventBus, EventBus } from './Event-bus';
+import { debounceInvokeFunction, deepClone } from '../utils';
+
+export const limitDeepCopy = (value: unknown): boolean => !(!!value
+	&& typeof value === 'object'
+	&& value instanceof Block);
 
 type ExcludePrefix<T extends string> = string extends T
 	? string
@@ -23,7 +27,7 @@ type PropsType = Record<string, unknown> & {
 	}
 }
 
-abstract class Block<T extends PropsType = PropsType> {
+export abstract class Block<T extends PropsType = PropsType> {
 	static EVENTS = {
 		INIT: 'init',
 		FLOW_CDM: 'flow:component-did-mount',
@@ -395,5 +399,3 @@ abstract class Block<T extends PropsType = PropsType> {
 		return `<div data-id="${this.id}"></div>`;
 	}
 }
-
-export default Block;

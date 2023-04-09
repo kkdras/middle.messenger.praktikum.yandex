@@ -1,4 +1,4 @@
-import Block from '../Block';
+import { Block } from '../Block';
 
 export default class Route {
 	private _instance: Block | null = null;

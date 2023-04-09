@@ -1,6 +1,6 @@
 import { dropLast } from '../../utils';
-import Block from '../Block';
-import EventBus from '../Event-bus';
+import { Block } from '../Block';
+import { EventBus } from '../Event-bus';
 import Route from './Route';
 
 type PathOptions = {
@@ -61,7 +61,7 @@ export default class Router extends EventBus {
 
 	use(
 		pathname: string,
-		constructor: ()=> Block,
+		constructor: (()=> Block),
 		{ isDefault, isNotFound }: PathOptions = {}
 	) {
 		if (isNotFound) this._notFoundPathname = pathname;

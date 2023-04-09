@@ -1,9 +1,9 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
 import { Link } from './components';
-import { Block } from '../../packages';
 import { LinkPropsType } from './components/link';
 import { Card, Container } from '../../ui';
+import { Block } from '../../packages/Block';
 
 const links: LinkPropsType[] = [
 	{ label: 'not found page', href: '/notFound' },

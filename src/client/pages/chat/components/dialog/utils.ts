@@ -1,5 +1,5 @@
 import { ChatsController } from '../../../../controllers';
-import { Block } from '../../../../packages';
+import { Block } from '../../../../packages/Block';
 import { Message } from '../message';
 
 export const createMessage = (

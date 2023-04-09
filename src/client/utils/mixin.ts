@@ -1,9 +1,5 @@
-import { Block } from '../packages';
-
-type BaseClassType = new (...args: any[])=> Block
-
 const defineMixin = <
-	T extends BaseClassType,
+	T extends new ()=> any,
 	S extends (new (...args: any[])=> unknown)[]
 >(BaseClass: T, mixins: S) => {
 	mixins.forEach((item) => {

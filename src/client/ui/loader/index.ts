@@ -1,9 +1,9 @@
 import tmpl from 'bundle-text:./index.hbs';
 import styles from './style.module.scss';
-import { Block } from '../../packages';
 import { withLoader } from '../../store';
 import spinner from '../../public/spinner.gif';
 import { classNames } from '../../utils';
+import { Block } from '../../packages/Block';
 
 type PropsType = {
 	loader: number;

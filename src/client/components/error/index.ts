@@ -1,6 +1,7 @@
 import tmp from 'bundle-text:./index.hbs';
+import { Block } from '../../packages/Block';
+import { RouterLink } from '../../packages/Router';
 import * as style from './style.module.scss';
-import { Block, RouterLink } from '../../packages';
 
 /**
  * @param props.title - основной заголовок

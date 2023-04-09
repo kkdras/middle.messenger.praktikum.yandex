@@ -1,6 +1,5 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
-import { Block } from '../../../../packages';
 import { Button, ButtonPropsType } from '../button';
 import {
 	EMAIL_PATTERN,
@@ -20,6 +19,7 @@ import avatarImg from '../../../../public/avatar.jpg';
 import {
 	handleChangeAvatar, handleChangePassword, handleLogout, handleUpdateProfile
 } from './utils';
+import { Block } from '../../../../packages/Block';
 
 type FieldsKeys = Exclude<keyof StateType['user'], 'avatar' | 'id'>
 

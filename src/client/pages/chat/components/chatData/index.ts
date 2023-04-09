@@ -1,11 +1,11 @@
 import tmp from 'bundle-text:./index.hbs';
 import { Store, withChatUsersAndChatId } from '../../../../store';
-import { Block } from '../../../../packages';
 import * as styles from './style.module.scss';
 import { Button } from '../../../../ui';
 import { createBanner, handleAddUser } from './utils';
 import { addUserPupUp } from '..';
 import { debounceInvokeFunction } from '../../../../utils';
+import { Block } from '../../../../packages/Block';
 
 type PropsType = {
 	chatUsers: IProfileData[];

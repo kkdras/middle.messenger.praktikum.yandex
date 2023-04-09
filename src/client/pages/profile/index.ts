@@ -3,10 +3,10 @@ import { withPasswordMode } from '../../store';
 import { link } from './components/link/index';
 import * as styles from './style.module.scss';
 import arrowImg from '../../public/arrow.png';
-import { Block } from '../../packages';
 import { Form, PasswordForm } from './components';
 import { Loader } from '../../ui';
 import { AuthController } from '../../controllers';
+import { Block } from '../../packages/Block';
 
 type PropsType = {
 	href: string,

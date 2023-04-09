@@ -1,7 +1,6 @@
 import tmp from 'bundle-text:./index.hbs';
 import { chatNameError, useClickOutside } from '../../../../utils/validation';
 import * as style from './style.module.scss';
-import { Block } from '../../../../packages';
 import {
 	Button,
 	ButtonPropsType,
@@ -11,6 +10,7 @@ import {
 } from '../../../../ui';
 import { handleSearch, createBanner } from './utils';
 import { Store, withAddUserPopUpProps } from '../../../../store';
+import { Block } from '../../../../packages/Block';
 
 const fields: TextFieldProps[] = [
 	{

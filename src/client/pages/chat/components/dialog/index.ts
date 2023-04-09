@@ -1,9 +1,9 @@
 import tmp from 'bundle-text:./index.hbs';
-import { Block } from '../../../../packages';
 import * as styles from './style.module.scss';
 import { withDialogProps } from '../../../../store';
 import { createMessage, handleSubmit, renderNewMessages } from './utils';
 import { Button } from '../../../../ui';
+import { Block } from '../../../../packages/Block';
 
 type PropsType = {
 	messages: IMessage[];

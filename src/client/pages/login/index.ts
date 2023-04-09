@@ -1,6 +1,5 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
-import { Block, getItem, Router } from '../../packages';
 import {
 	loginError,
 	LOGIN_PATTERN,
@@ -11,6 +10,9 @@ import {
 	Button, ButtonPropsType, Card, Container, TextField, TextFieldProps
 } from '../../ui';
 import { handleAccDoesExist, handleSignIn } from './utils';
+import { Block } from '../../packages/Block';
+import { Router } from '../../packages/Router';
+import { getItem } from '../../packages/Storage';
 
 const fields: TextFieldProps[] = [
 	{

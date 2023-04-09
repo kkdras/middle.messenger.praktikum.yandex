@@ -1,4 +1,4 @@
-import { HTTPTransport } from '../packages';
+import { HTTPTransport } from '../packages/Fetch';
 
 const fetcher = new HTTPTransport('/chats');
 

@@ -1,9 +1,6 @@
 import tmp from 'bundle-text:./index.hbs';
 import { debounceInvokeFunction } from '../../utils/functions';
 import * as style from './style.module.scss';
-import {
-	Block, getItem, Router, RouterLink
-} from '../../packages';
 import { Button, Loader, TextField } from '../../ui';
 import {
 	handleCreateNewChat,
@@ -14,6 +11,9 @@ import { withChatPageData } from '../../store';
 import { newChatPopUp, InfoBanner, Dialog } from './components';
 import { AuthController, ChatsController } from '../../controllers';
 import { ChatData } from './components/chatData';
+import { Block } from '../../packages/Block';
+import { Router, RouterLink } from '../../packages/Router';
+import { getItem } from '../../packages/Storage';
 
 type PropsType = {
 	submitButton: Block;

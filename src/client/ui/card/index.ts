@@ -1,7 +1,7 @@
 import tmp from 'bundle-text:./index.hbs';
 import * as style from './style.module.scss';
-import { Block } from '../../packages';
 import { classNames } from '../../utils';
+import { Block } from '../../packages/Block';
 
 type PropsType = {
 	children: Block | Block[];

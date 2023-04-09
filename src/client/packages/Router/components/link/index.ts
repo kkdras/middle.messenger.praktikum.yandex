@@ -1,7 +1,7 @@
-import tmpl from 'bundle-text:./index.hbs';
-import Router from '../../Router';
-import Block from '../../../Block';
+import tmp from './index.hbs';
+import { Block } from '../../../Block';
 import { classNames } from '../../../../utils';
+import Router from '../../Router';
 
 type PropsType = {
 	classes?: Parameters<typeof classNames>;
@@ -10,7 +10,6 @@ type PropsType = {
 	children: string;
 	type?: 'back';
 };
-
 const router = new Router();
 
 class RouterLink extends Block {
@@ -32,8 +31,7 @@ class RouterLink extends Block {
 	}
 
 	render() {
-		return Block.compile(tmpl, this.props);
+		return Block.compile(tmp, this.props);
 	}
 }
-
 export default RouterLink;

@@ -1,6 +1,5 @@
 import tmp from 'bundle-text:./index.hbs';
-import { BlockEvents } from '../../../../packages/Block';
-import { Block } from '../../../../packages';
+import { Block, BlockEvents } from '../../../../packages/Block';
 import * as style from './style.module.scss';
 
 export type InfoBannerProps = {

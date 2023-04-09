@@ -1,7 +1,6 @@
-/* eslint-disable max-classes-per-file */
 import { deepClone, isEqual } from '../utils';
-import Block from './Block';
-import Store, { StoreType } from './Store';
+import { Block } from './Block';
+import { StoreType, Store } from './Store';
 
 type InferObjectValues<T> = T extends Record<string, infer V>
 	? InferObjectValues<V> | V
@@ -17,7 +16,7 @@ type ReturnConstructor<
 	args: Omit<ConstructorParameters<T>[0], keyof ReturnType<K>>
 )=> InstanceType<T>;
 
-class Connector<S extends InstanceType<StoreType>> {
+export class Connector<S extends InstanceType<StoreType>> {
 	constructor(
 		readonly _store: S
 	) { }
@@ -46,5 +45,3 @@ class Connector<S extends InstanceType<StoreType>> {
 		};
 	}
 }
-
-export default Connector;

@@ -1,6 +1,6 @@
 import Handlebars from 'handlebars';
 import tmpl from 'bundle-text:./index.hbs';
-import { RouterLink } from '../../../../packages';
+import { RouterLink } from '../../../../packages/Router';
 
 type PropsType = {
 	href: string,

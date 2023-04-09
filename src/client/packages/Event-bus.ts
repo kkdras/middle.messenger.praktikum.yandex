@@ -4,7 +4,7 @@ export interface IEventBus {
 	emit(name: string, ...args: any[]): void
 }
 
-class EventBus implements IEventBus {
+export class EventBus implements IEventBus {
 	listeners: Record<string, any[]>;
 	constructor() {
 		this.listeners = {};
@@ -36,5 +36,3 @@ class EventBus implements IEventBus {
 		});
 	}
 }
-
-export default EventBus;

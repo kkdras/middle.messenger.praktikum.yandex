@@ -1,11 +1,11 @@
 import {
 	debounceInvokeFunction, deepClone, logger, set
 } from '../utils';
-import EventBus from './Event-bus';
+import { EventBus } from './Event-bus';
 
 type StoreRestrict = Record<string, unknown>;
 
-class Store<T extends StoreRestrict> extends EventBus {
+export class Store<T extends StoreRestrict> extends EventBus {
 	readonly _state: T;
 	static _initialized: boolean;
 
@@ -32,5 +32,4 @@ class Store<T extends StoreRestrict> extends EventBus {
 	}
 }
 
-export default Store;
 export type StoreType = typeof Store;

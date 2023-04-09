@@ -1,5 +1,5 @@
 import tmp from 'bundle-text:./index.hbs';
-import { Block, BlockEvents } from '../../packages';
+import { BlockEvents, Block } from '../../packages/Block';
 
 export type DefaultInputProps = {
 	type?: HTMLInputElement['type'],

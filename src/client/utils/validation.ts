@@ -1,5 +1,3 @@
-import { Block } from '../packages';
-
 export const NAME_PATTERN = '^[А-ЯЁA-Z][а-яёa-zА-ЯЁA-Z-]*$';
 
 export const LOGIN_PATTERN = '^(?:[0-9]+[A-z_-]|[A-z_-]+[0-9]|[A-z_-]+)[A-z0-9-_]*$';
@@ -28,6 +26,12 @@ export const chatNameError = 'Поле обязательно, от 4 до 40 с
 
 export const displayNameError = 'Буквы, цыфры, дефис, нижнее подчеркивание';
 
+interface IBlock {
+	_eventBus(): {
+		emit(eventName: string): void
+	}
+}
+
 const baseEffect = (e: Event) => {
 	(e.target as HTMLInputElement).checkValidity();
 };
@@ -52,7 +56,7 @@ export class BaseInputHandlers {
 
 	input = (e: Event) => {
 		this.touched = true;
-		const blockInstance = ((e.target as any).__BlockInstance || null) as Block | null;
+		const blockInstance = ((e.target as any).__BlockInstance || null) as IBlock | null;
 		blockInstance?._eventBus()?.emit?.('valid');
 	};
 
@@ -68,7 +72,7 @@ export class BaseInputHandlers {
 
 	invalid = (e: Event) => {
 		this.touched = true;
-		const blockInstance = ((e.target as any).__BlockInstance || null) as Block | null;
+		const blockInstance = ((e.target as any).__BlockInstance || null) as IBlock | null;
 		blockInstance?._eventBus()?.emit('invalid');
 	};
 };

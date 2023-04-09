@@ -1,5 +1,7 @@
-import { Connector, ConfigureStore, removeItem } from './packages';
+import { Connector } from './packages/Connect';
+import { removeItem } from './packages/Storage';
 import { deepClone, logger } from './utils';
+import { Store as ConfigureStore } from './packages/Store';
 
 export const defaultChat = {
 	list: [] as IChat[],

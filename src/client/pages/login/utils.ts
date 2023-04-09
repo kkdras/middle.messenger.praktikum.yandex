@@ -1,5 +1,5 @@
 import { AuthController } from '../../controllers';
-import { Router } from '../../packages';
+import { Router } from '../../packages/Router';
 
 const router = new Router();
 

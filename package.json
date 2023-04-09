@@ -13,7 +13,8 @@
     "test": "mocha",
     "clean": "rm -r .parcel-cache build",
     "dev-clean": "npm run clean & npm run dev",
-    "type-check": "tsc --pretty --noEmit"
+    "type-check": "tsc --pretty --noEmit",
+    "prepare": "husky install"
   },
   "engines": {
     "node": "18.13.0"
@@ -63,6 +64,7 @@
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-plugin-import": "^2.25.2",
     "express": "^4.18.2",
+    "husky": "^8.0.3",
     "jsdom": "^21.1.1",
     "mocha": "^10.2.0",
     "parcel": "^2.4.1",

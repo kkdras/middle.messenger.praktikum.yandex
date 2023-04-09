@@ -5,7 +5,7 @@ import Router from '../../Router';
 
 type PropsType = {
 	classes?: Parameters<typeof classNames>;
-	href: string;
+	href?: string;
 	events?: Record<string, (e: Event)=> void>;
 	children: string;
 	type?: 'back';
@@ -34,4 +34,5 @@ class RouterLink extends Block {
 		return Block.compile(tmp, this.props);
 	}
 }
+export type RouterLinkType = typeof RouterLink;
 export default RouterLink;

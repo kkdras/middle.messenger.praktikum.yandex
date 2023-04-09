@@ -9,7 +9,8 @@
     "src/server/"
   ],
 	"ts-node": {
-		"files": true
+		"files": true,
+		"transpileOnly": true
 	},
   "compilerOptions": {
 		"jsx": "react",

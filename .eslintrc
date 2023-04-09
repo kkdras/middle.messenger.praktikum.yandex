@@ -17,7 +17,7 @@
 		"airbnb-typescript/base"
 	],
 	"rules": {
-		"import/no-cycle": 0,
+		"max-classes-per-file": 0,
 		"@typescript-eslint/semi": 0,
 		"@typescript-eslint/consistent-type-definitions": 0,
 		"@typescript-eslint/naming-convention": 0,

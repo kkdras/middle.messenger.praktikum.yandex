@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars';
-import tmpl from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { RouterLink } from '../../../../packages/Router';
 
 type PropsType = {
@@ -8,7 +8,7 @@ type PropsType = {
 };
 
 export const link = ({ href, iconPath }: PropsType) => new RouterLink({
-	children: Handlebars.compile(tmpl)({ iconPath }),
+	children: Handlebars.compile(tmp)({ iconPath }),
 	href,
 	classes: ['ibj'],
 	type: 'back'

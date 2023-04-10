@@ -27,14 +27,14 @@
 		cursor: pointer;
 		width: 130px;
 		height: 130px;
-		background-color: var(--bright-gray-background from global);
+		background-color: var(--bright-gray-background);
 		border-radius: 50%;
 		overflow: hidden;
 		margin-bottom: 20px;
 	}
 
 	&__headerName {
-		color: var(--bright-color from global);
+		color: var(--bright-color);
 		font-size: 18px;
 		font-weight: 600;
 		line-height: 1;

@@ -1,3 +1,4 @@
+import './styles/style.scss';
 import { render } from './utils';
 import {
 	chat,
@@ -8,9 +9,6 @@ import {
 	profile,
 	defaultPage
 } from './pages';
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import style from './styles/style.scss';
 import { Block } from './packages/Block';
 import { Router } from './packages/Router';
 

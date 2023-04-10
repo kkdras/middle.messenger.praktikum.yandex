@@ -1,7 +1,7 @@
-import tmp from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { withPasswordMode } from '../../store';
 import { link } from './components/link/index';
-import * as styles from './style.module.scss';
+import styles from './style.module.scss';
 import arrowImg from '../../public/arrow.png';
 import { Form, PasswordForm } from './components';
 import { Loader } from '../../ui';

@@ -5,7 +5,7 @@
 	justify-content:center;
 	align-items: center;
 	min-width: 100%;
-	background-color: var(--primary-color from global);
+	background-color: var(--primary-color);
 	border-radius: 8px;
 	height: 37px;
 	color: #fff;
@@ -15,9 +15,9 @@
 	border: none;
 
 	&_outlined {
-		border: 2px solid var(--primary-color from global);
+		border: 2px solid var(--primary-color);
 		background-color: #fff;
-		color: var(--primary-color from global);
+		color: var(--primary-color);
 	}
 }
 

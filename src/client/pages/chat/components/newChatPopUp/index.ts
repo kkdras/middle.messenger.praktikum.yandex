@@ -1,6 +1,6 @@
-import tmp from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { chatNameError, useClickOutside } from '../../../../utils/validation';
-import * as style from './style.module.scss';
+import style from './style.module.scss';
 import {
 	Button,
 	ButtonPropsType,

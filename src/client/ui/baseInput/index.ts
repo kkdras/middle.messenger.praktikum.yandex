@@ -1,4 +1,4 @@
-import tmp from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { BlockEvents, Block } from '../../packages/Block';
 
 export type DefaultInputProps = {

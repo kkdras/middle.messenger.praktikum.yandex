@@ -13,7 +13,7 @@ import {
 	phoneError,
 	PHONE_PATTERN
 } from '../../utils/validation';
-import * as style from './style.module.scss';
+import style from './style.module.scss';
 
 const onChangePasswordField = () => {
 	Store.setState('app.passwordError', false);

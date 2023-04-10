@@ -1,5 +1,5 @@
-import tmp from 'bundle-text:./index.hbs';
-import * as style from './style.module.scss';
+import tmp from './index.hbs';
+import style from './style.module.scss';
 import { Button, ButtonPropsType } from '../button';
 import {
 	EMAIL_PATTERN,

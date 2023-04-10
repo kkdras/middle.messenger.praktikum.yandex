@@ -1,4 +1,4 @@
-import tmpl from 'bundle-text:./index.hbs';
+import tmpl from './index.hbs';
 import styles from './style.module.scss';
 import { withLoader } from '../../store';
 import spinner from '../../public/spinner.gif';

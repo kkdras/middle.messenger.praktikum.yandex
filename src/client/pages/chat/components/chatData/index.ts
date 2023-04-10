@@ -1,6 +1,6 @@
-import tmp from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { Store, withChatUsersAndChatId } from '../../../../store';
-import * as styles from './style.module.scss';
+import styles from './style.module.scss';
 import { Button } from '../../../../ui';
 import { createBanner, handleAddUser } from './utils';
 import { addUserPupUp } from '..';

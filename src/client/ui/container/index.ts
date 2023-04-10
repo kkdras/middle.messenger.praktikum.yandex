@@ -1,6 +1,6 @@
-import tmp from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { Block } from '../../packages/Block';
-import * as style from './style.module.scss';
+import style from './style.module.scss';
 
 class Container extends Block {
 	constructor(args: { children: Block | string }) {

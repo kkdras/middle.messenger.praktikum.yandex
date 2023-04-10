@@ -6,7 +6,7 @@
 	position: relative;
 
 	&__label {
-		color: var(--second-color from global);
+		color: var(--second-color);
 		font-weight: 500;
 		font-size: 14px;
 		line-height: 1;
@@ -23,7 +23,7 @@
 	}
 
 	&_error &__input {
-		color: var(--wrong-color from global);
+		color: var(--wrong-color);
 	}
 
 	&__errorContainer {
@@ -33,7 +33,7 @@
 			display: block;
 			height: 1px;
 			width: 100%;
-			background-color: var(--primary-color from global);
+			background-color: var(--primary-color);
 			position: absolute;
 			top: 0;
 		}
@@ -42,7 +42,7 @@
 	&__errorBody {
 		opacity: 0;
 		visibility: hidden;
-		color: var(--wrong-color from global);
+		color: var(--wrong-color);
 		padding-top: 2px;
 		font-size: 12px;
 	}
@@ -50,7 +50,7 @@
 
 .field:global(.invalid) .field__errorContainer{
 	&::after {
-		background-color: var(--wrong-color from global);
+		background-color: var(--wrong-color);
 	}
 }
 .field:global(.invalid) .field__errorBody{

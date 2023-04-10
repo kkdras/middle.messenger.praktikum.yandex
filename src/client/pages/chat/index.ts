@@ -1,6 +1,6 @@
-import tmp from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { debounceInvokeFunction } from '../../utils/functions';
-import * as style from './style.module.scss';
+import style from './style.module.scss';
 import { Button, Loader, TextField } from '../../ui';
 import {
 	handleCreateNewChat,

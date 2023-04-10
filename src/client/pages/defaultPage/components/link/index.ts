@@ -1,7 +1,7 @@
-import tmp from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { Block } from '../../../../packages/Block';
 import { createLink } from '../../../../packages/Router';
-import * as style from './style.module.scss';
+import style from './style.module.scss';
 
 export type LinkPropsType = {
 	href?: string,

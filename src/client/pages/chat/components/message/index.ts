@@ -1,7 +1,7 @@
-import tmp from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { Block } from '../../../../packages/Block';
 import { classNames } from '../../../../utils';
-import * as styles from './style.module.scss';
+import styles from './style.module.scss';
 
 type PropsType = {
 	message: string;

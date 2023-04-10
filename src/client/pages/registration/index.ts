@@ -1,9 +1,9 @@
-import tmp from 'bundle-text:./index.hbs';
+import tmp from './index.hbs';
 import { AuthController } from '../../controllers/auth';
 import {
 	Card, Container, TextField, Button
 } from '../../ui';
-import * as style from './style.module.scss';
+import style from './style.module.scss';
 import { buttons, fields } from './utils';
 import { Store, withPasswordError } from '../../store';
 import { Block } from '../../packages/Block';

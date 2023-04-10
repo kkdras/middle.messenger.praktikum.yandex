@@ -1,5 +1,5 @@
-import tmp from 'bundle-text:./index.hbs';
-import * as style from './style.module.scss';
+import tmp from './index.hbs';
+import style from './style.module.scss';
 import { BaseInputHandlers, classNames } from '../../utils';
 import BaseInput from '../baseInput';
 import { BlockEvents, Block } from '../../packages/Block';

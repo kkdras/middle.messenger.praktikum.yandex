@@ -1,5 +1,5 @@
-import tmp from 'bundle-text:./index.hbs';
-import * as styles from './style.module.scss';
+import tmp from './index.hbs';
+import styles from './style.module.scss';
 import { withDialogProps } from '../../../../store';
 import { createMessage, handleSubmit, renderNewMessages } from './utils';
 import { Button } from '../../../../ui';

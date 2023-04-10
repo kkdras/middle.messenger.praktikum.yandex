@@ -1,3 +1,5 @@
+@import url("./../../../../styles/style.scss");
+
 .link {
 	padding: 5px;
 	border-radius: 10px;
@@ -10,7 +12,7 @@
 
 	a {
 		font-weight: 600;
-		color: var(--bright-color from global);
+		color: var(--bright-color);
 		font-size: 14px;
 		line-height: 1.2;
 		@media (any-hover: hover){

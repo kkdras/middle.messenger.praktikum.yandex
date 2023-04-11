@@ -7,7 +7,7 @@
 		"lint:fix": "eslint --ext .ts,.jsx,.tsx src --fix",
 		"dev": "webpack serve",
 		"start": "node ./build/server/index.js",
-		"build": "cp _redirects build/_redirects && webpack --mode=production",
+		"build": "webpack --mode=production",
 		"test": "mocha",
 		"type-check": "tsc --pretty --noEmit",
 		"prepare": "husky install",

@@ -10,6 +10,7 @@ global.document = window.document;
 global.DocumentFragment = window.DocumentFragment;
 global.createElement = window.createElement;
 global.history = window.history;
+global.FormData = window.FormData;
 
 require.extensions['.hbs'] = function (module, filename) {
 	const tmp = fs.readFileSync(filename, 'utf-8');

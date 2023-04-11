@@ -1,0 +1,51 @@
+.message {
+	position: relative;
+	min-width: 115px;
+	max-width: 380px;
+	padding: 10px 10px 20px;
+
+	&__time {
+		position: absolute;
+		right: 5px;
+		bottom: 5px;
+		font-size: 10px;
+	}
+
+	&__body {
+		color: #1e1e1e;
+		font-size: 14px;
+		line-height: 1.2;
+	}
+
+	&__owner {
+		margin-bottom: 5px;
+		color: #999;
+	}
+}
+
+.message.their {
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	background-color: #f8f8f8;
+
+	&__time {
+		color: #999;
+	}
+}
+
+.my {
+	margin-left: auto;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	background-color:#e4edfd;
+
+	&__time {
+		color: #3369f3;
+	}
+
+	&__owner {
+		display: none;
+	}
+}

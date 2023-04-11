@@ -6,7 +6,7 @@ require('dotenv').config({ path: './.env' });
 
 const plugins = [
 	new HtmlWebpackPlugin({
-		template: path.resolve(__dirname, 'src', 'client', 'public', 'index.html')
+		template: path.resolve(__dirname, 'src', 'public', 'index.html')
 	}),
 	new MiniCssExtractPlugin(),
 	new webpack.DefinePlugin({
@@ -20,7 +20,7 @@ module.exports = {
 	mode: isDevelopment ? 'development' : 'production',
 	plugins,
 	devtool: 'source-map',
-	entry: path.resolve(__dirname, 'src', 'client', 'index.ts'),
+	entry: path.resolve(__dirname, 'src', 'index.ts'),
 	devServer: {
 		hot: true,
 		port: 1234,
@@ -29,9 +29,8 @@ module.exports = {
 	},
 
 	output: {
-		path: path.resolve(__dirname, 'build', 'client'),
+		path: path.resolve(__dirname, 'build'),
 		filename: 'index.js',
-		// assetModuleFilename: 'assets/[hash][ext][query]',
 		clean: true
 	},
 	resolve: {

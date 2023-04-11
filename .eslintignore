@@ -4,3 +4,5 @@ build
 .husky
 .git
 *.json
+server.js
+machaSetup.js

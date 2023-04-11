@@ -1,8 +1,17 @@
 {
-  "extends": "stylelint-config-standard",
-  "rules": {
-    "color-hex-case": "lower"
-  },
+	"extends": [
+		"stylelint-config-standard-scss"
+	],
+	"plugins": [
+		"stylelint-order"
+	],
+	"rules": {
+		"selector-pseudo-class-no-unknown": null,
+		"media-feature-range-notation": null,
+		"font-family-no-missing-generic-family-keyword": null,
+		"no-duplicate-selectors": null,
+		"selector-class-pattern": null
+	},
   "ignoreFiles": [
     "build/*"
   ]

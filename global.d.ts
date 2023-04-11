@@ -23,6 +23,9 @@ declare const process = {
 declare module 'bundle-text:./*' {
 	export default string;
 }
+declare module '*.hbs' {
+	export default string;
+}
 
 declare module '*.jpg' {
 	const value: string;

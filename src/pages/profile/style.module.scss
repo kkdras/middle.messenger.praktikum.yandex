@@ -1,0 +1,39 @@
+@import './../../styles/style';
+
+.pageContainer {
+	display: flex;
+	width: 100%;
+	min-height: 100%;
+}
+
+.leftBar {
+	display: flex;
+	align-items: center;
+	flex: 0 0 40px;
+	justify-content: center;
+	width: 40px;
+	transition: all 0.3s ease 0s;
+	border-right: 1px solid var(--main-border-color);
+	background-color: var(--dim-gray-background);
+
+	a {
+		overflow: hidden;
+		width: 28px;
+		height: 28px;
+		text-decoration: none;
+		border-radius: 50%;
+	}
+
+	@media (min-width: 768px){
+		flex: 0 0 64px;
+		width: 64px;
+	}
+}
+
+.profile, .profile > div {
+	display: flex;
+	align-items: center;
+	justify-content:center;
+	width: 100%;
+	padding: 20px;
+}

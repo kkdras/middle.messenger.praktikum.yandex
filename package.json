@@ -6,7 +6,7 @@
 		"lint": "eslint --ext .ts,.jsx,.tsx src",
 		"lint:fix": "eslint --ext .ts,.jsx,.tsx src --fix",
 		"dev": "webpack serve",
-		"start": "node ./build/server/index.js",
+		"start": "npm run build && node ./server.js",
 		"build": "webpack --mode=production",
 		"test": "mocha",
 		"type-check": "tsc --pretty --noEmit",

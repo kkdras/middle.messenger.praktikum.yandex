@@ -399,3 +399,5 @@ export abstract class Block<T extends PropsType = PropsType> {
 		return `<div data-id="${this.id}"></div>`;
 	}
 }
+
+export type BlockType = typeof Block;

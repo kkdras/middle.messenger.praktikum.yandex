@@ -9,7 +9,7 @@ type PathOptions = {
 };
 
 export default class Router extends EventBus {
-	private _history: History = window.history;
+	private _history: History = globalThis.history;
 	// use for check when user try to go out from app
 	private _customHistoryState: string[];
 	private _indexRoutes: Record<string, Route> = {};
@@ -117,3 +117,5 @@ export default class Router extends EventBus {
 		return this._currentView?.getContent();
 	}
 }
+
+export type RouterType = typeof Router

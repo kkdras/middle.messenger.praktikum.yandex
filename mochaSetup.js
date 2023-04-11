@@ -12,7 +12,8 @@ global.createElement = window.createElement;
 global.history = window.history;
 
 require.extensions['.hbs'] = function (module, filename) {
-	module.exports = fs.readFileSync(filename, 'utf-8');
+	const tmp = fs.readFileSync(filename, 'utf-8');
+	module.exports = tmp;
 };
 
 require.extensions['.scss'] = function () {

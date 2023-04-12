@@ -1,0 +1,84 @@
+@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap';
+
+html, body, #root, #root > div{
+	min-width: 100%;
+	height: 100%;
+	min-height: 100vh;
+	font-family: Roboto;
+	font-size: 0.75rem;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+ul[class],
+ol[class] {
+	padding: 0;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+	margin: 0;
+}
+
+body {
+	min-height: 100vh;
+	scroll-behavior: smooth;
+	text-rendering: optimizespeed;
+	line-height: 1.5;
+}
+
+ul[class],
+ol[class] {
+	list-style: none;
+}
+
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+
+:root {
+	--primary-color: #3369f3;
+	--wrong-color: #ff2f2f;
+	--bright-color: #1e1e1e;
+	--second-color: #999;
+	--dim-blue-background: #e4edfd;
+	--bright-gray-background: #efefef;
+	--dim-gray-background:#fbfbfb;
+	--main-border-color: #eaeaea;
+}
+
+a {
+	text-decoration: none;
+}
+
+.ibg {
+	position: relative;
+
+	> img {
+		position: absolute;
+		object-fit: cover;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+}

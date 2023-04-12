@@ -1,6 +1,8 @@
 node_modules
-build
+dist
 *.config.js
 .husky
 .git
 *.json
+server.js
+mochaSetup.js

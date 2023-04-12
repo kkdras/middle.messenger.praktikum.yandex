@@ -1,0 +1,50 @@
+
+.profile {
+	display: flex;
+	align-items: center;
+	justify-content:center;
+	width: 100%;
+	padding: 20px;
+
+	&__body {
+		flex: 1 1 auto;
+		max-width: 600px;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		margin-bottom: 50px;
+
+		input {
+			visibility: hidden;
+			opacity: 0;
+		}
+	}
+
+	&__headerAvatar {
+		overflow: hidden;
+		width: 130px;
+		height: 130px;
+		margin-bottom: 20px;
+		cursor: pointer;
+		border-radius: 50%;
+		background-color: var(--bright-gray-background);
+	}
+
+	&__headerName {
+		color: var(--bright-color);
+		font-size: 18px;
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	&__data {
+		margin-bottom: 50px;
+	}
+}
+
+.hidden {
+	display: none;
+}

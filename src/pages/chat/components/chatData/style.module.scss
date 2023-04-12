@@ -1,0 +1,46 @@
+.chat {
+	display: flex;
+	width: 100%;
+	height:  100%;
+
+	&__form {
+		flex: 1 1 auto;
+
+		& > div {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	&__usersTitle {
+		font-size: 16px;
+
+	}
+
+	&__users {
+		display: flex;
+		flex: 0 0 300px;
+		flex-direction: column;
+		border-left: 1px solid #eaeaea;
+	}
+
+	&__info {
+		padding: 10px;
+		border-bottom: 1px solid #eaeaea;
+
+		& > *:not(:last-child) {
+			margin: 0 0 10px;
+		};
+	}
+
+	&__usersBody {
+		display: flex;
+		overflow-y: auto;
+		flex-direction: column;
+		justify-content: start;
+
+		& > div:not(:last-child) {
+			border-bottom: 1px solid #eaeaea;
+		}
+	}
+}

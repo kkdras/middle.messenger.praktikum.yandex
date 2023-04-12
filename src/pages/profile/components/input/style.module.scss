@@ -1,0 +1,59 @@
+@import './../../../../styles/style';
+
+.inputContainer {
+	&__body {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		min-height: 34px;
+		padding: 5px 0;
+
+		label {
+			cursor: pointer;
+			color: var(--bright-color);
+			font-size: 14px;
+			font-weight: 500;
+		}
+	}
+
+	&__input {
+		flex: 1 1 auto;
+		text-align: right;
+		color: var(--second-color);
+		border: none;
+		outline: none;
+		background-color: none;
+		font-size: 14px;
+	}
+
+	&__errorContainer {
+		position: relative;
+		border-top: 1px solid #eaeaea;
+	}
+
+	&__errorBody {
+		visibility: hidden;
+		padding-top: 2px;
+		opacity: 0;
+		color: var(--wrong-color);
+		font-size: 12px;
+	}
+}
+
+.inputContainer:global(.invalid) .inputContainer__errorContainer{
+	border-color: var(--wrong-color);
+
+	input {
+		color: var(--wrong-color);
+	}
+}
+
+.inputContainer:global(.invalid) .inputContainer__errorBody {
+	visibility: visible;
+	opacity: 1;
+}
+
+.inputContainer:global(.invalid) .inputContainer__input{
+	color: var(--wrong-color);
+}

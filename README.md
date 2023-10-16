@@ -1,6 +1,6 @@
 
 # SPA build on vanila JS
-This project wsa created for educational purposes. The main idea to implement SPA is not using the usual tools.
+This project was created for educational purposes. The main idea is to implement SPA without using usual tools.
 
 ![git workflow](https://github.com/kkdras/middle.messenger.praktikum.yandex/actions/workflows/tests.yml/badge.svg)
 ## Сommands
